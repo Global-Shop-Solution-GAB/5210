@@ -1,0 +1,1573 @@
+Program.Sub.ScreenSU.Start
+Gui.Form..Create
+Gui.Form..Caption("Resevation Per Part")
+Gui.Form..Size(21765,10980)
+Gui.Form..MinX(0)
+Gui.Form..MinY(0)
+Gui.Form..Position(0,0)
+Gui.Form..BackColor(-2147483633)
+Gui.Form..MousePointer(0)
+Gui.Form..Event(UnLoad,Form_UnLoad)
+Gui.Form.gsReserv.Create(GsGridControl)
+Gui.Form.gsReserv.Size(21495,9555)
+Gui.Form.gsReserv.Position(30,765)
+Gui.Form.gsReserv.Event(CellValueChanged,gsReserv_CellValueChanged)
+Gui.Form.gsReserv.Event(RowCellClick,gsReserv_RowCellClick)
+Gui.Form.gsReserv.TabStop(True)
+Gui.Form.gsReserv.TabIndex(3)
+Gui.Form.gsReserv.Anchor(15)
+Gui.Form.lbl1.Create(Label,"Part",False,630,255,0,150,165,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl1.FontStyle(True,False,False,False,False)
+Gui.Form.lbl2.Create(Label,"Loc",False,900,255,0,2205,165,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl2.FontStyle(True,False,False,False,False)
+Gui.Form.lbl3.Create(Label,"Description",False,1290,255,0,3210,165,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl3.FontStyle(True,False,False,False,False)
+Gui.Form.cmdRefresh.Create(Button)
+Gui.Form.cmdRefresh.Size(900,375)
+Gui.Form.cmdRefresh.Position(17055,150)
+Gui.Form.cmdRefresh.Caption("Refresh")
+Gui.Form.cmdRefresh.BackColor(3329434)
+Gui.Form.cmdRefresh.ForeColor(16777215)
+Gui.Form.cmdRefresh.Event(Click,cmdRefresh_Click)
+Gui.Form.cmdRefresh.TabStop(True)
+Gui.Form.cmdRefresh.TabIndex(2)
+Gui.Form.lbl4.Create(Label,"Order-Line",False,1350,255,0,6945,150,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl4.FontStyle(True,False,False,False,False)
+Gui.Form.lblPart.Create(Label,"Label",False,1935,255,0,150,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblPart.ForeColor(3107669)
+Gui.Form.lblLoc.Create(Label,"Label",False,735,255,0,2205,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblLoc.ForeColor(3107669)
+Gui.Form.lblDescription.Create(Label,"Label",False,3690,255,0,9450,135,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblDescription.ForeColor(3107669)
+Gui.Form.lblSOLine.Create(Label,"Label",False,750,255,0,6000,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblSOLine.ForeColor(255)
+Gui.Form.lblSOLineDisplay.Create(Label,"Label",False,1560,255,0,6945,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblSOLineDisplay.ForeColor(255)
+Gui.Form.proBar.Create(ProgressBar)
+Gui.Form.proBar.Visible(False)
+Gui.Form.proBar.Size(1920,135)
+Gui.Form.proBar.Position(18000,330)
+Gui.Form.proBar.Anchor(13)
+Gui.Form.txt1.Create(TextBox,"",False,690,300,0,150,330,True,0,"Arial",8,-2147483643,1)
+Gui.Form.txtPartSearch.Create(TextBox,"",True,2175,300,0,7395,225,True,0,"Arial",8,16777215,1)
+Gui.Form.txtPartSearch.Event(LostFocus,txtPartSearch_LostFocus)
+Gui.Form.txtPartSearch.TabStop(True)
+Gui.Form.txtPartSearch.TabIndex(1)
+Gui.Form.optSinglePart.Create(Option)
+Gui.Form.optSinglePart.Size(1215,255)
+Gui.Form.optSinglePart.Position(6165,270)
+Gui.Form.optSinglePart.Caption("Single Part")
+Gui.Form.optSinglePart.Event(Click,optSinglePart_Click)
+Gui.Form.optAllParts.Create(Option)
+Gui.Form.optAllParts.Size(1215,255)
+Gui.Form.optAllParts.Position(15675,225)
+Gui.Form.optAllParts.Caption("All Parts")
+Gui.Form.optAllParts.Event(Click,optAllParts_Click)
+Gui.Form.optSalesOrder.Create(Option)
+Gui.Form.optSalesOrder.Size(1320,255)
+Gui.Form.optSalesOrder.Position(11025,270)
+Gui.Form.optSalesOrder.Caption("Sales Order")
+Gui.Form.optSalesOrder.Event(Click,optSalesOrder_Click)
+Gui.Form.txtSOSearch.Create(TextBox,"",True,2175,300,0,12375,225,True,0,"Arial",8,16777215,1)
+Gui.Form.txtSOSearch.TabStop(True)
+Gui.Form.txtSOSearch.TabIndex(1)
+Gui.Form.cmdBrowsePart.Create(Button)
+Gui.Form.cmdBrowsePart.Size(465,375)
+Gui.Form.cmdBrowsePart.Position(9585,180)
+Gui.Form.cmdBrowsePart.Caption("^")
+Gui.Form.cmdBrowsePart.Event(Click,cmdBrowsePart_Click)
+Gui.Form.cmdBrowseSalesOrder.Create(Button)
+Gui.Form.cmdBrowseSalesOrder.Size(465,375)
+Gui.Form.cmdBrowseSalesOrder.Position(14580,180)
+Gui.Form.cmdBrowseSalesOrder.Caption("^")
+Gui.Form.cmdBrowseSalesOrder.Event(Click,cmdBrowseSalesOrder_Click)
+Gui.Form.optCustomerSearch.Create(Option)
+Gui.Form.optCustomerSearch.Size(1185,255)
+Gui.Form.optCustomerSearch.Position(255,225)
+Gui.Form.optCustomerSearch.Caption("Customer")
+Gui.Form.optCustomerSearch.Event(Click,optCustomerSearch_Click)
+Gui.Form.txtCustomerSearch.Create(TextBox,"",True,3750,300,0,1350,225,True,0,"Arial",8,-2147483643,1)
+Gui.Form.txtCustomerSearch.TabStop(True)
+Gui.Form.txtCustomerSearch.TabIndex(1)
+Gui.Form.cmdCustomerBrowser.Create(Button)
+Gui.Form.cmdCustomerBrowser.Size(465,375)
+Gui.Form.cmdCustomerBrowser.Position(5115,180)
+Gui.Form.cmdCustomerBrowser.Caption("^")
+Gui.Form.cmdCustomerBrowser.Event(Click,cmdCustomerBrowser_Click)
+Gui.Form.cmdReset.Create(Button)
+Gui.Form.cmdReset.Size(1545,375)
+Gui.Form.cmdReset.Position(19965,150)
+Gui.Form.cmdReset.Caption("Reset Columns")
+Gui.Form.cmdReset.ToolTip("Reset Columns")
+Gui.Form.cmdReset.Event(Click,cmdReset_Click)
+Gui.Form.cmdReset.Anchor(9)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+v.Global.iSecs.Declare
+v.Global.bLoad.Declare
+v.Global.sPart.Declare
+v.Global.sLoc.Declare
+Program.External.Include.Library("3500.lib",False)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'BN, Nov 1, 2018
+'This script will create a dashboard that allows user to reserve parts on the fly.
+
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+
+	'f.Intrinsic.Debug.BenchmarkModeEnable
+	'f.Intrinsic.Debug.BenchmarkThreshold(1000)	
+	f.ODBC.Connection!conx.OpenCompanyConnection
+	f.Data.Dictionary.CreateFromSQL("LocDict","conx","select Location,ltrim(rtrim(Location_Desc)) from V_locations")
+	f.Data.Dictionary.SetDefaultReturn("LocDict","")
+	
+	f.Intrinsic.Control.CallSub(CreateContextMenu)
+	
+	'Bind auto complete
+	f.Intrinsic.UI.InvokeWaitDialog("Getting data for auto-complete...")
+	
+	f.Data.Dictionary.CreateFromSQL("PartSearch","conx","Select Distinct Part,Part from Inventory_Mstr")
+	gui.Form.txtPartSearch.AddAutoCompleteItem("PartSearch","Dictionary")
+	
+	f.Data.Dictionary.CreateFromSQL("SOSearch","conx","Select Distinct Order_No,Order_No from v_Order_header")
+	gui.Form.txtSOSearch.AddAutoCompleteItem("SOSearch","Dictionary")
+
+	f.Data.Dictionary.CreateFromSQL("abc","conx","Select Customer,Customer + ' ~ ' + Name_Customer  from v_Customer_Master")
+	gui.Form.txtCustomerSearch.AddAutoCompleteItem("abc","Dictionary")	
+	
+	f.Intrinsic.UI.CloseWaitDialog
+	
+	gui.Form..Show	
+	f.Intrinsic.Control.BlockEvents
+	gui.Form.optSinglePart.Value(1)
+	f.Intrinsic.Control.CallSub("Refresh")
+	gui.Form.cmdRefresh.SetFocus
+	f.Intrinsic.Control.UnBlockEvents	
+	
+	gui.Form.optCustomerSearch.Value(1)
+	gui.Form.txtSOSearch.BackColor(v.Color.Gray)
+	gui.Form.txtSOSearch.Enabled(False)
+	gui.Form.txtPartSearch.BackColor(v.Color.Gray)
+	gui.Form.txtPartSearch.Enabled(False)	
+
+	gui.Form.txtCustomerSearch.SetFocus
+	
+	gui.Form..WindowState(2)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Main.End
+
+Program.Sub.CreateContextMenu.Start
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	
+	'Part Master
+	gui.Form..ContextMenuCreate("PartMaster")
+	gui.Form..ContextMenuAddItem("PartMaster","SupplyAndDemandView",0,"Supply and Demand View")
+	gui.Form..ContextMenuAddItem("PartMaster","SupplyAndDemandEdit",0,"Supply and Demand Edit")	
+	gui.Form..ContextMenuAddItem("PartMaster","PartView",0,"Part View")
+	gui.Form..ContextMenuAddItem("PartMaster","PartEdit",0,"Part Edit")		
+	
+	Gui.Form..ContextMenuSetItemEventHandler("PartMaster","SupplyAndDemandView","PartMaster_Handler")
+	Gui.Form..ContextMenuSetItemEventHandler("PartMaster","SupplyAndDemandEdit","PartMaster_Handler")
+	Gui.Form..ContextMenuSetItemEventHandler("PartMaster","PartView","PartMaster_Handler")
+	Gui.Form..ContextMenuSetItemEventHandler("PartMaster","PartEdit","PartMaster_Handler")	
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.CreateContextMenu.End
+
+Program.Sub.PartMaster_Handler.Start
+F.Intrinsic.Control.Try	
+	v.Local.sError.Declare
+	V.Local.sJOB.Declare
+	V.Local.sSuf.Declare
+	V.Local.sParams.Declare
+	v.Local.sTemp.Declare
+	v.Local.bAuth.Declare
+	
+	F.Intrinsic.Control.SelectCase(v.Args.ItemName.UCase)
+	
+		f.Intrinsic.Control.Case("SUPPLYANDDEMANDEDIT")
+			f.Global.Security.CheckUserAccessIPM(371,0,v.Local.bAuth)
+			f.Intrinsic.Control.If(v.Local.bAuth.Not)
+				f.Intrinsic.UI.Msgbox("User does not have permission to Supply and Demand Edit screen.","Menu Item Not Assigned")
+				f.Intrinsic.Control.ExitSub
+			f.Intrinsic.Control.EndIf				
+			
+			'Launch Supply and Demand Edit mode
+			F.Intrinsic.String.Build("{0}!*!{1}!*!M",v.Global.sPart,v.Global.sLoc,v.Local.sParams)
+			F.Global.General.CallWrapperASync(300011,v.Local.sParams)
+			
+		F.Intrinsic.Control.Case("SUPPLYANDDEMANDVIEW")
+			f.Global.Security.CheckUserAccessIPM(321,0,v.Local.bAuth)
+			f.Intrinsic.Control.If(v.Local.bAuth.Not)
+				f.Intrinsic.UI.Msgbox("User does not have permission to Supply and Demand View screen.","Menu Item Not Assigned")
+				f.Intrinsic.Control.ExitSub
+			f.Intrinsic.Control.EndIf			
+			
+			'Launch Supply and Demand View mode
+			F.Intrinsic.String.Build("{0}!*!{1}!*!A",v.Global.sPart,v.Global.sLoc,v.Local.sParams)
+			F.Global.General.CallWrapperASync(300010,v.Local.sParams)
+			
+	
+		f.Intrinsic.Control.Case("PARTVIEW")
+			Function.Global.Security.CheckUserAccessIPM(312,0,v.Local.bAuth)
+			f.Intrinsic.Control.If(v.Local.bAuth.Not)
+				f.Intrinsic.UI.Msgbox("User does not have permission to Inventory > View > Inventory Parts.","Menu Item Not Assigned")
+				f.Intrinsic.Control.ExitSub
+			f.Intrinsic.Control.EndIf			
+
+			f.Data.DataTable.AddRow("3500","CompanyCode",v.Caller.CompanyCode,"Mode","V","PART",V.Global.sPart,"LOC",v.Global.sLoc)
+			F.Intrinsic.Control.CallSub(3500ASync)	
+			
+		f.Intrinsic.Control.Case("PARTEDIT")
+			Function.Global.Security.CheckUserAccessIPM(310,1,v.Local.bAuth)
+			f.Intrinsic.Control.If(v.Local.bAuth.Not)
+				f.Intrinsic.Control.CallSub(Deal_OnTop,"Flag",False)
+				f.Intrinsic.UI.Msgbox("User does not have permission to Inventory > File > Inventory Parts > Open.","Menu Item Not Assigned")
+				f.Intrinsic.Control.CallSub(Deal_OnTop,"Flag",True)
+				f.Intrinsic.Control.ExitSub
+			f.Intrinsic.Control.EndIf	
+			
+			f.Data.DataTable.AddRow("3500","CompanyCode",v.Caller.CompanyCode,"Mode","O","PART",V.Global.sPart,"LOC",v.Global.sLoc)
+			F.Intrinsic.Control.CallSub(3500ASync)			
+			
+	F.Intrinsic.Control.EndSelect
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.PartMaster_Handler.End
+
+Program.Sub.Create_MainTB_and_LocRangeTB.Start
+F.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	
+	'MainTB is for the dashboard
+	f.Intrinsic.Control.If(v.DataTable.MainTB.Exists)
+		f.Data.DataTable.Close("MainTB")
+	f.Intrinsic.Control.EndIf
+	F.Data.DataTable.Create("MainTB",True)
+	f.Data.DataTable.AddColumn("MainTB","Group","String")
+	f.Data.DataTable.AddColumn("MainTB","Location","String")
+	f.Data.DataTable.AddColumn("MainTB","LocDescr","String")
+	f.Data.DataTable.AddColumn("MainTB","Part","String")
+	f.Data.DataTable.AddColumn("MainTB","SOLine","String")
+	f.Data.DataTable.AddColumn("MainTB","Date_Item_PromDATE","Date")
+	f.Data.DataTable.AddColumn("MainTB","Customer","String")
+	f.Data.DataTable.AddColumn("MainTB","Name","String")
+	f.Data.DataTable.AddColumn("MainTB","Order_Ship_ID","String")
+	f.Data.DataTable.AddColumn("MainTB","Total","String")
+	f.Data.DataTable.AddColumn("MainTB","Qty_OnHand","Float")
+	f.Data.DataTable.AddColumn("MainTB","Available","Float")
+	f.Data.DataTable.AddColumn("MainTB","TotalOpenQty","Float")
+	f.Data.DataTable.AddColumn("MainTB","TotalCurrentReserved","Float")
+	f.Data.DataTable.AddColumn("MainTB","Qty_Ordered","Float")
+	f.Data.DataTable.AddColumn("MainTB","Qty_Shipped","Float")
+	f.Data.DataTable.AddColumn("MainTB","Qty_BO","Float")
+	f.Data.DataTable.AddColumn("MainTB","Current_Reserved","Float")	
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Create_MainTB_and_LocRangeTB.End
+
+Program.Sub.Create_Dictionaries.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.bExist.Declare
+	v.Local.sSQL.Declare
+	v.Local.sDistinctCustomer.Declare
+	v.Local.sPartSearch.Declare
+	
+	'Qty_Onhand, Qty_Avai = Qty_Onhand - Qty_Required
+	f.Intrinsic.Control.If(v.DataTable.OnhandAvailable.Exists)
+		f.Data.DataTable.Close("OnhandAvailable")
+	f.Intrinsic.Control.EndIf	
+	f.Intrinsic.Control.If(v.Screen.Form!optAllParts.Value)
+		v.Local.sSQL.Set("Select Part + '-' + Location as PartLoc,qty_onhand, Qty_onhand - Qty_Required as Qty_Available from Inventory_mstr")
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSinglePart.Value,=,True)
+		f.Intrinsic.String.Build("Select Part + '-' + Location as PartLoc,qty_onhand, Qty_onhand - Qty_Required as Qty_Available from Inventory_mstr where Part like '{0}%'",v.Args.sPartSearch.PSQLFriendly,v.Local.sSQL)
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSalesOrder.Value,=,True,or,v.Screen.Form!optCustomerSearch.Value,=,True)
+		f.Intrinsic.String.Build("Select Part + '-' + Location as PartLoc,qty_onhand, Qty_onhand - Qty_Required as Qty_Available from Inventory_mstr where Part in ('{0}')",v.Args.sPartCollection,v.Local.sSQL)
+	f.Intrinsic.Control.EndIf	
+	f.Data.DataTable.CreateFromSQL("OnhandAvailable","conx",v.Local.sSQL,True)
+		
+	'Get Qty_OnHand_Dict
+	f.Data.Dictionary.Exists("OnHandDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("OnHandDict")
+	f.Intrinsic.Control.EndIf	
+	f.Data.Dictionary.CreateFromDatatable("OnHandDict","OnhandAvailable","PartLoc","Qty_Onhand")
+	f.Data.Dictionary.SetDefaultReturn("OnHandDict",0)
+	'Get Qty_Available_Dict
+	f.Data.Dictionary.Exists("QtyAvailableDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("QtyAvailableDict")
+	f.Intrinsic.Control.EndIf	
+	f.Data.Dictionary.CreateFromDatatable("QtyAvailableDict","OnhandAvailable","PartLoc","Qty_Available")
+	f.Data.Dictionary.SetDefaultReturn("QtyAvailableDict",0)	
+	
+	'Get AllCurrentReserved Dict
+	f.Data.Dictionary.Exists("AllCurReservedDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("AllCurReservedDict")
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.If(v.Screen.Form!optAllParts.Value)
+		v.Local.sSQL.Set("Select Part + '-' + Loc as PartLoc ,Sum(Current_Reserved) as AllCurrentReserved from GCG_5210_Reserve where Current_Reserved <> 0 group by Part,Loc")
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSinglePart.Value,=,True)
+		f.Intrinsic.String.Build("Select Part + '-' + Loc as PartLoc ,Sum(Current_Reserved) as AllCurrentReserved from GCG_5210_Reserve where Part like '{0}%' and  Current_Reserved <> 0 group by Part,Loc",v.Args.sPartSearch.PSQLFriendly,v.Local.sSQL)
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSalesOrder.Value,=,True,or,v.Screen.Form!optCustomerSearch.Value,=,True)
+		f.Intrinsic.String.Build("Select Part + '-' + Loc as PartLoc ,Sum(Current_Reserved) as AllCurrentReserved from GCG_5210_Reserve where Part in ('{0}') and  Current_Reserved <> 0 group by Part,Loc",v.Args.sPartCollection,v.Local.sSQL)
+	f.Intrinsic.Control.EndIf	
+	f.Data.Dictionary.CreateFromSQL("AllCurReservedDict","conx",v.Local.sSQL)
+	f.Data.Dictionary.SetDefaultReturn("AllCurReservedDict",0)
+	
+	'Get CurrentReserved Dict
+	f.Data.Dictionary.Exists("CurReservedDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("CurReservedDict")
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.If(v.Screen.Form!optAllParts.Value)
+		v.Local.sSQL.Set("Select SO + '-' + Line as SOLine,Current_Reserved from GCG_5210_Reserve where Current_Reserved <> 0")
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSinglePart.Value,=,True)
+		f.Intrinsic.String.Build("Select SO + '-' + Line as SOLine,Current_Reserved from GCG_5210_Reserve where Part like '{0}%' and  Current_Reserved <> 0",v.Args.sPartSearch.PSQLFriendly,v.Local.sSQL)
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSalesOrder.Value,=,True,or,v.Screen.Form!optCustomerSearch.Value,=,True)
+		f.Intrinsic.String.Build("Select SO + '-' + Line as SOLine,Current_Reserved from GCG_5210_Reserve where Part in ('{0}') and  Current_Reserved <> 0",v.Args.sPartCollection,v.Local.sSQL)
+	f.Intrinsic.Control.EndIf		
+	f.Data.Dictionary.CreateFromSQL("CurReservedDict","conx",v.Local.sSQL)
+	f.Data.Dictionary.SetDefaultReturn("CurReservedDict",0)		
+	
+	'Get distinct Customer
+	f.Intrinsic.Control.If(v.DataView.All!vAllForCust.Exists)
+		f.Data.DataView.Close("All","vAllForCust")
+	f.Intrinsic.Control.EndIf
+	f.Data.DataView.Create("All","vAllForCust")
+	f.Intrinsic.Control.If(v.DataTable.DistinctPart.Exists)
+		f.Data.DataTable.Close("DistinctPart")
+	f.Intrinsic.Control.EndIf
+	f.Data.DataView.ToString("All","vAllForCust","Customer","","','",v.Local.sDistinctCustomer)	
+	
+	'CustomerName Dict
+	f.Data.Dictionary.Exists("CustomerDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("CustomerDict")
+	f.Intrinsic.Control.EndIf	
+	f.Intrinsic.String.Build("Select Customer,Name_Customer from V_Customer_Master Where Customer in ('{0}')",v.Local.sDistinctCustomer,v.Local.sSQL)
+	f.Data.Dictionary.CreateFromSQL("CustomerDict","conx",v.Local.sSQL)
+	f.Data.Dictionary.SetDefaultReturn("CustomerDict","")	
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Create_Dictionaries.End
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''Reserve Grid''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Program.Sub.Refresh.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.iCnt.Declare
+	v.Local.sFilter.Declare
+	v.Local.iInner.Declare
+	v.local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fQty_Ordered.Declare
+	v.Local.fQty_Shipped.Declare
+	v.Local.fQty_BO.Declare
+	v.Local.bSecurity.Declare
+	v.Local.sReleasedRecords.Declare
+	v.Local.sHold.Declare
+	v.Local.sAutoReleasedUser.Declare
+	v.Local.sPartSearch.Declare
+	v.Local.sSOSearch.Declare
+	v.Local.sPartCollection.Declare
+	v.Local.sCustomer.Declare
+	
+	gui.Form..Enabled(False)
+	f.Global.Security.IsInGroup(v.Caller.User,"RELEASE",V.Caller.CompanyCode,V.Local.bSecurity)
+	
+	f.Intrinsic.UI.InvokeWaitDialog("Preparing ....")
+		
+	'Create Maint table and locRangeTaB
+	f.Intrinsic.Control.CallSub("Create_MainTB_and_LocRangeTB")
+	
+	f.Intrinsic.Control.If(v.DataTable.PartLocs.Exists)
+		f.Data.DataTable.Close("PartLocs")
+	f.Intrinsic.Control.EndIf
+	v.Local.sPartSearch.Set(v.Screen.Form!txtPartSearch.Text.Trim)
+	f.Intrinsic.Control.If(v.Local.sPartSearch,=,"")
+		v.Local.sPartSearch.Set("~!@#$")	
+	f.Intrinsic.Control.EndIf	
+	
+	f.Intrinsic.Control.If(v.Screen.Form!optAllParts.Value)
+		v.Local.sSQL.Set("Select Part,Location as Loc from Inventory_Mstr  order by Part,Location")
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSinglePart.Value,=,True)
+		f.Intrinsic.String.Build("Select Part,Location as Loc from Inventory_Mstr  where Part Like '{0}%' order by Part,Location",v.Local.sPartSearch.PSQLFriendly,v.Local.sSQL)
+		
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSalesOrder.Value,=,True)
+		v.Local.sSOSearch.Set(v.Screen.Form!txtSOSearch.Text.Trim)		
+		f.Intrinsic.String.Build("Select distinct Part from V_Order_Lines where Order_No = '{0}' ",v.Local.sSOSearch.PSQLFriendly,v.Local.sSQL)	
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		f.Intrinsic.Control.If(v.Ambient.ExecuteAndReturnEOF)
+			gui.Form..Enabled(True)
+			f.Intrinsic.UI.CloseWaitDialog
+			gui.Form.gsReserv.ClearRows("GVMain")
+			f.Intrinsic.UI.Msgbox("No records found")			
+			f.Intrinsic.Control.ExitSub		
+		f.Intrinsic.Control.EndIf		
+		f.Intrinsic.String.Replace(v.Local.sRet,"'","''",v.Local.sRet)
+		f.Intrinsic.String.Replace(v.Local.sRet,"#$#","','",v.Local.sPartCollection)				
+		f.Intrinsic.String.Build("Select Part,Location as Loc from Inventory_Mstr  where Part in ('{0}') order by Part,Location",v.Local.sPartCollection,v.Local.sSQL)	
+		
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optCustomerSearch.Value,=,True)
+		v.Local.sCustomer.Set(v.Screen.Form!txtCustomerSearch.Text.Trim)
+		v.Local.sCustomer.Set(v.Local.sCustomer.Left6)	
+		v.Local.sCustomer.Set(v.Local.sCustomer.UCase)
+		f.Intrinsic.String.Build("Select distinct Part from V_Order_Lines where Customer = '{0}' ",v.Local.sCustomer.PSQLFriendly,v.Local.sSQL)	
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		f.Intrinsic.Control.If(v.Ambient.ExecuteAndReturnEOF)
+			gui.Form..Enabled(True)
+			f.Intrinsic.UI.CloseWaitDialog
+			gui.Form.gsReserv.ClearRows("GVMain")
+			f.Intrinsic.UI.Msgbox("No records found")			
+			f.Intrinsic.Control.ExitSub		
+		f.Intrinsic.Control.EndIf		
+		f.Intrinsic.String.Replace(v.Local.sRet,"'","''",v.Local.sRet)
+		f.Intrinsic.String.Replace(v.Local.sRet,"#$#","','",v.Local.sPartCollection)			
+		f.Intrinsic.String.Build("Select Part,Location as Loc from Inventory_Mstr  where Part in ('{0}') order by Part,Location",v.Local.sPartCollection,v.Local.sSQL)		
+	
+	f.Intrinsic.Control.EndIf	
+	f.Data.DataTable.CreateFromSQL("PartLocs","conx",v.Local.sSQL,True)
+	
+	f.Intrinsic.Control.If(v.DataTable.All.Exists)
+		f.Data.DataTable.Close("All")
+	f.Intrinsic.Control.EndIf
+	''Now get all the Order-Lines from V_Order_Lines. These are Order-Lines that have not been shipped yet and have back order > 0(Order Lines that are still open and have back order qty > 0).
+	f.Intrinsic.Control.If(v.Screen.Form!optAllParts.Value)
+		v.Local.sSQL.Set("Select Location,Part,Order_No + '-' + Record_No as SOLine,DATE_ITEM_PROM,Customer,'' as Name,SHIP_ID as ORDER_SHIP_ID,QTY_ORDERED,QTY_SHIPPED,QTY_BO,Part + '-' + Location as PartLoc,concat(Order_No,Record_No) as SONum, Convert(1,SQL_Bit) as StillOpen from V_Order_Lines where Line_Type = 'S' and Qty_BO > 0 Order by Part,Location,DATE_ITEM_PROM")
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSinglePart.Value,=,True)
+		f.Intrinsic.String.Build("Select Location,Part,Order_No + '-' + Record_No as SOLine,DATE_ITEM_PROM,Customer,'' as Name,SHIP_ID as ORDER_SHIP_ID,QTY_ORDERED,QTY_SHIPPED,QTY_BO,Part + '-' + Location as PartLoc,concat(Order_No,Record_No) as SONum, Convert(1,SQL_Bit) as StillOpen from V_Order_Lines where Part like '{0}%' and Line_Type = 'S' and Qty_BO > 0 Order by Part,Location,DATE_ITEM_PROM",v.Local.sPartSearch.PSQLFriendly,v.Local.sSQL)
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSalesOrder.Value,=,True,or,v.Screen.Form!optCustomerSearch.Value,=,True)	
+		f.Intrinsic.String.Build("Select Location,Part,Order_No + '-' + Record_No as SOLine,DATE_ITEM_PROM,Customer,'' as Name,SHIP_ID as ORDER_SHIP_ID,QTY_ORDERED,QTY_SHIPPED,QTY_BO,Part + '-' + Location as PartLoc,concat(Order_No,Record_No) as SONum, Convert(1,SQL_Bit) as StillOpen from V_Order_Lines where Part in ('{0}') and Line_Type = 'S' and Qty_BO > 0 Order by Part,Location,DATE_ITEM_PROM",v.Local.sPartCollection,v.Local.sSQL)
+	f.Intrinsic.Control.EndIf		
+	f.Data.DataTable.CreateFromSQL("All","conx",v.Local.sSQL,True)	
+	
+	f.Data.DataTable.AddColumn("All","Current_Reserved","Float",0)	
+	
+	'****************************************************************************************Add Automatically Release feature BN Feb 20 2019******************************************************
+	'BN, Feb 20, 2019 Add Parts that are shipped/invoiced, but the current reserved is still not released and still sitting in GCG_5210_Reserve table
+	f.Intrinsic.Control.If(v.Screen.Form!optAllParts.Value)
+		v.Local.sSQL.Set("SELECT Concat(SO,Line) as SOLine,SO,Line,SO + '-' + Line as SOLineToRelease,Convert(0,SQL_Bit) as Shipped,Part,Loc,Current_Reserved FROM GCG_5210_Reserve WHERE Current_Reserved > 0")
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSinglePart.Value,=,True)
+		f.Intrinsic.String.Build("SELECT Concat(SO,Line) as SOLine,SO,Line,SO + '-' + Line as SOLineToRelease,Convert(0,SQL_Bit) as Shipped,Part,Loc,Current_Reserved FROM GCG_5210_Reserve WHERE Part like  '{0}%' and Current_Reserved > 0",v.Local.sPartSearch.PSQLFriendly,v.Local.sSQL)
+	f.Intrinsic.Control.ElseIf(v.Screen.Form!optSalesOrder.Value,=,True,or,v.Screen.Form!optCustomerSearch.Value,=,True)
+		f.Intrinsic.String.Build("SELECT Concat(SO,Line) as SOLine,SO,Line,SO + '-' + Line as SOLineToRelease,Convert(0,SQL_Bit) as Shipped,Part,Loc,Current_Reserved FROM GCG_5210_Reserve WHERE Part in ('{0}') and Current_Reserved > 0",v.Local.sPartCollection,v.Local.sSQL)
+	f.Intrinsic.Control.EndIf	
+	
+	f.Data.DataTable.CreateFromSQL("NotReleased","conx",v.Local.sSQL,True)
+	'Now get all the Order-Lines from V_Order_Lines. These are Order-Lines that have not been shipped yet and have back order > 0(Order Lines that are still open and have back order qty > 0).
+	f.Data.Dictionary.CreateFromDataTable("OpenOderLinesDict","All","SONum","StillOpen")
+	f.Data.Dictionary.SetDefaultReturn("OpenOderLinesDict",False)	
+	f.Data.Datatable.FillFromDictionary("NotReleased","OpenOderLinesDict","SOLine","Shipped")
+	
+	v.Local.sReleasedRecords.Set("#ReleasedRecord")
+	
+	f.Intrinsic.String.Build("Auto Release by {0}",v.Caller.User,v.Local.sAutoReleasedUser)
+	'Get the closed Order-lines. These closed Order-Lines are not in V_Order_Lines any more, but are now in V_Shipment_Lines or in V_Order_Hist_Line.
+	'These closed Order-Lines'Current_Reserved quantity need to be released.
+	f.Data.DataView.Create("NotReleased","NDV",22,"Shipped = 0","")	
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataView.NotReleased!NDV.RowCount--,1)
+		'Update the GCG_5210_Reserve, set Current_Reserved = 0, View_User = 'Auto-Released', Date_Reserved
+		f.Intrinsic.String.Build("Update GCG_5210_Reserve set Current_Reserved = 0, Date_Reserved = Now(), View_User = '{2}' where SO = '{0}' and Line = '{1}'",v.DataView.NotReleased!NDV(v.Local.iCnt).SO!FieldValString,v.DataView.NotReleased!NDV(v.Local.iCnt).Line!FieldValString,v.Local.sAutoReleasedUser,v.Local.sSQL)
+		f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+		'Insert into GCG_5210_Hist
+		f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',0,0,'{4}',Now())",v.DataView.NotReleased!NDV(v.Local.iCnt).SO!FieldValString,v.DataView.NotReleased!NDV(v.Local.iCnt).Line!FieldValString,v.DataView.NotReleased!NDV(v.Local.iCnt).Part!FieldValString,v.DataView.NotReleased!NDV(v.Local.iCnt).Loc!FieldValString,v.Local.sAutoReleasedUser,v.Local.sSQL)
+		f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+		'Insert into GCG_5210_Released
+		f.Intrinsic.String.Format(v.DataView.NotReleased!NDV(v.Local.iCnt).Current_Reserved!FieldValString,"0.00",v.Local.sHold)
+		f.Intrinsic.String.Build("{0},{1}-{2}:{3}",v.Local.sReleasedRecords,v.DataView.NotReleased!NDV(v.Local.iCnt).SO!FieldValString,v.DataView.NotReleased!NDV(v.Local.iCnt).Line!FieldValString,v.Local.sHold,v.Local.sReleasedRecords)		
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	
+	'Insert into GCG_5210_Released
+	f.Intrinsic.Control.If(v.Local.sReleasedRecords,<>,"#ReleasedRecord")
+		f.Intrinsic.String.Replace(v.Local.sReleasedRecords,"#ReleasedRecord,","",v.Local.sReleasedRecords)
+		f.Intrinsic.String.Build("Insert into GCG_5210_Released (Date_Released,View_User,ReleasedRecords) values (Now(),'{0}','{1}')",v.Local.sAutoReleasedUser,v.Local.sReleasedRecords,v.Local.sSQL)
+		f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	f.Intrinsic.Control.EndIf
+	
+	f.Data.Dictionary.Close("OpenOderLinesDict")	
+	f.Data.DataTable.Close("NotReleased")	
+	'****************************************************************************************End added part BN Feb 21 2019 ***************************************************************************
+	
+	'After releasing we load dictionary, that way, the Create_Dictionaries sub will load faster because it will exclude the Current_Reserved qty = 0
+	f.Intrinsic.Control.CallSub("Create_Dictionaries","sPartSearch",v.Local.sPartSearch,"sPartCollection",v.Local.sPartCollection)
+	
+	f.Intrinsic.Control.If(v.DataView.All!AllDV.Exists)
+		f.Data.DataView.Close("All","AllDV")
+	f.Intrinsic.Control.EndIf
+	f.Data.DataView.Create("All","AllDV",22)
+	'Distinct Part
+	f.Intrinsic.Control.If(v.DataTable.DistinctPart.Exists)
+		f.Data.DataTable.Close("DistinctPart")
+	f.Intrinsic.Control.EndIf
+	f.Data.DataView.ToDataTableDistinct("All","AllDV","DistinctPart","Part",True)
+	
+	f.Intrinsic.UI.CloseWaitDialog	
+	
+	'Set proBar
+	gui.Form.proBar.Visible(True)	
+	f.Intrinsic.Control.If(v.DataTable.DistinctPart.RowCount,>,0)
+		gui.Form.proBar.Max(v.DataTable.DistinctPart.RowCount)
+		gui.Form.proBar.Value(0)
+	f.Intrinsic.Control.EndIf
+	
+	'Each Part	
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.DistinctPart.RowCount--,1)
+		gui.Form.proBar.Value(v.Local.iCnt)
+		
+		'Create EachPart table
+		f.Intrinsic.String.Build("Part = '{0}'",v.DataTable.DistinctPart(v.Local.iCnt).Part!FieldValString,v.Local.sFilter)
+		f.Data.DataView.Create("All","EachPartDV",22,v.Local.sFilter,"Location ASC")
+		f.Data.DataView.ToDataTable("All","EachPartDV","EachPart",True)
+		
+		'Add current Location to Main table
+		f.Data.DataTable.AddRow("MainTB","Part",v.DataTable.EachPart(0).Part!FieldValString,"Group","Grp 1")
+		f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.DataTable.EachPart(0).Part!FieldValString,"sLoc",v.DataTable.EachPart(0).Location!FieldValString,"iGroup",0)		
+
+		'Get other locations	
+		f.Intrinsic.String.Build("Part = '{0}' and Loc <> '{1}' and (Loc = '20' or Loc = '22' or Loc = '25')",v.DataTable.EachPart(0).Part!FieldValString,v.DataTable.EachPart(0).Location!FieldValString,v.Local.sFilter)
+		f.Data.DataView.Create("PartLocs","PartLocsDV",22,v.Local.sFilter,"Loc ASC")
+		'Group 1
+		f.Data.DataView.ToDataTable("PartLocs","PartLocsDV","Group1",True)
+		'Group 2
+		f.Intrinsic.String.Build("Part = '{0}' and Loc <> '{1}' and Loc = '21'",v.DataTable.EachPart(0).Part!FieldValString,v.DataTable.EachPart(0).Location!FieldValString,v.Local.sFilter)
+		f.Data.DataView.SetFilter("PartLocs","PartLocsDV",v.Local.sFilter)
+		f.Data.DataView.ToDataTable("PartLocs","PartLocsDV","Group2",True)
+		'Group 3
+		f.Intrinsic.String.Build("Part = '{0}' and Loc <> '{1}' and (Loc = '11' or Loc = '12' or Loc = '13' or Loc = '14' or Loc = '15')",v.DataTable.EachPart(0).Part!FieldValString,v.DataTable.EachPart(0).Location!FieldValString,v.Local.sFilter)
+		f.Data.DataView.SetFilter("PartLocs","PartLocsDV",v.Local.sFilter)
+		f.Data.DataView.ToDataTable("PartLocs","PartLocsDV","Group3",True)
+		'Group 4
+		f.Intrinsic.String.Build("Part = '{0}' and Loc <> '{1}' and (Loc = '90' or Loc = '91' or Loc = '92' or Loc = '93' or Loc = '94' or Loc = '95' or Loc = '96' or Loc = '97' or Loc = '98' or Loc = '99')",v.DataTable.EachPart(0).Part!FieldValString,v.DataTable.EachPart(0).Location!FieldValString,v.Local.sFilter)
+		f.Data.DataView.SetFilter("PartLocs","PartLocsDV",v.Local.sFilter)
+		f.Data.DataView.ToDataTable("PartLocs","PartLocsDV","Group4",True)
+		'Group 5
+		f.Intrinsic.String.Build("Part = '{0}' and Loc <> '{1}' and Loc <> '20' and Loc <> '21' and Loc <> '22' and Loc <> '25' and Loc <> '11' and Loc <> '12' and Loc <> '13' and Loc <> '14' and Loc <> '15'               and Loc <> '90' and Loc <> '91' and Loc <> '92' and Loc <> '93' and Loc <> '94' and Loc <> '95' and Loc <> '96' and Loc <> '97' and Loc <> '98' and Loc <> '99'",v.DataTable.EachPart(0).Part!FieldValString,v.DataTable.EachPart(0).Location!FieldValString,v.Local.sFilter)
+		f.Data.DataView.SetFilter("PartLocs","PartLocsDV",v.Local.sFilter)
+		f.Data.DataView.ToDataTable("PartLocs","PartLocsDV","Group5",True)
+		
+		'Group 1
+		f.Intrinsic.Control.For(v.Local.iInner,0,v.DataTable.Group1.RowCount--,1)
+			f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.DataTable.EachPart(0).Part!FieldValString,"sLoc",v.DataTable.Group1(v.Local.iInner).Loc!FieldValString,"iGroup",1)
+		f.Intrinsic.Control.Next(v.Local.iInner)
+		
+		'Group 2
+		f.Intrinsic.Control.If(v.DataTable.Group2.RowCount,>,0)
+			f.Data.DataTable.AddRow("MainTB","Part",v.DataTable.EachPart(0).Part!FieldValString,"Group","Grp 2: Nst")
+		f.Intrinsic.Control.EndIf
+		f.Intrinsic.Control.For(v.Local.iInner,0,v.DataTable.Group2.RowCount--,1)
+			f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.DataTable.EachPart(0).Part!FieldValString,"sLoc",v.DataTable.Group2(v.Local.iInner).Loc!FieldValString,"iGroup",2)
+		f.Intrinsic.Control.Next(v.Local.iInner)
+	
+		'Group 3
+		f.Intrinsic.Control.If(v.DataTable.Group3.RowCount,>,0)
+			f.Data.DataTable.AddRow("MainTB","Part",v.DataTable.EachPart(0).Part!FieldValString,"Group","Grp 3: AL")
+		f.Intrinsic.Control.EndIf
+		f.Intrinsic.Control.For(v.Local.iInner,0,v.DataTable.Group3.RowCount--,1)
+			f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.DataTable.EachPart(0).Part!FieldValString,"sLoc",v.DataTable.Group3(v.Local.iInner).Loc!FieldValString,"iGroup",3)
+		f.Intrinsic.Control.Next(v.Local.iInner)
+		
+		'Group 4
+		f.Intrinsic.Control.If(v.DataTable.Group4.RowCount,>,0)
+			f.Data.DataTable.AddRow("MainTB","Part",v.DataTable.EachPart(0).Part!FieldValString,"Group","Gr4 4: TX")
+		f.Intrinsic.Control.EndIf
+		f.Intrinsic.Control.For(v.Local.iInner,0,v.DataTable.Group4.RowCount--,1)
+			f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.DataTable.EachPart(0).Part!FieldValString,"sLoc",v.DataTable.Group4(v.Local.iInner).Loc!FieldValString,"iGroup",4)
+		f.Intrinsic.Control.Next(v.Local.iInner)
+		
+		'Group 5
+		f.Intrinsic.Control.If(v.DataTable.Group5.RowCount,>,0)
+			f.Data.DataTable.AddRow("MainTB","Part",v.DataTable.EachPart(0).Part!FieldValString,"Group","Group 5: Others")
+		f.Intrinsic.Control.EndIf	
+		f.Intrinsic.Control.For(v.Local.iInner,0,v.DataTable.Group5.RowCount--,1)
+			f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.DataTable.EachPart(0).Part!FieldValString,"sLoc",v.DataTable.Group5(v.Local.iInner).Loc!FieldValString,"iGroup",5)
+		f.Intrinsic.Control.Next(v.Local.iInner)	
+
+		f.Data.DataView.Close("All","EachPartDV")
+		f.Data.DataTable.Close("EachPart")
+		f.Data.DataView.close("PartLocs","PartLocsDV")
+		
+		f.Data.DataTable.Close("Group1")
+		f.Data.DataTable.Close("Group2")
+		f.Data.DataTable.Close("Group3")
+		f.Data.DataTable.Close("Group4")
+		f.Data.DataTable.Close("Group5")
+	
+	f.Intrinsic.Control.Next(v.Local.iCnt)	
+	
+	gui.Form.proBar.Visible(False)
+	f.Intrinsic.UI.InvokeWaitDialog("Preparing grid format to show...")
+
+	'LotBin
+	f.Data.DataTable.AddColumn("MainTB","LotBin","String","Lot/Bin")
+	'Num
+	f.Data.DataTable.AddColumn("MainTB","Num","Long")
+	f.Data.DataTable.SetSeries("MainTB","Num",1,1)
+	'LocDescr
+	f.Data.DataTable.FillFromDictionary("MainTB","LocDict","Location","LocDescr")
+	f.Data.DataTable.AddExpressionColumn("MainTB","SO","String","Substring(SOLine,1,7)")
+	f.Data.DataTable.AddColumn("MainTB","PO","String","")
+	
+	'Get PO
+	f.Data.Dictionary.CreateFromSQL("dictPO","conx","Select Order_No,Customer_PO from v_Order_Header")
+	f.Data.Dictionary.SetDefaultReturn("dictPO","")
+	f.Data.DataTable.FillFromDictionary("MainTB","dictPO","SO","PO")
+	f.Data.Dictionary.Close("dictPO")
+	
+	gui.Form.gsReserv.AddGridviewFromDatatable("GVMain","MainTB")
+	
+	
+	f.Intrinsic.Control.CallSub("Format_Grid")
+	
+	f.Intrinsic.Control.CallSub(Deserialize)	
+	
+	gui.Form.gsReserv.MainView("GVMain")
+	gui.Form.gsReserv.ClearSorting("GVMain")
+	v.Global.bLoad.Set(True)
+	f.Intrinsic.UI.CloseWaitDialog	
+
+	gui.Form..Enabled(True)
+	gui.Form.cmdRefresh.SetFocus
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Refresh.End
+
+Program.Sub.Add_One_Location_Data.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.fOnhand.Declare
+	v.Local.fAllCurrentReserved.Declare
+	v.Local.fAvailable.Declare
+	v.Local.sLabelTotal.Declare
+	v.Local.sPartLoc.Declare
+	v.Local.sFilter.Declare
+	v.Local.fTotalOpenQty.Declare
+	
+	f.Intrinsic.Control.SelectCase(v.Args.iGroup)		
+		f.Intrinsic.Control.CaseAny(0,1,2,5)
+			f.Intrinsic.Control.If(v.DataView.EachPart!EachPartDV.Exists)
+				f.Data.DataView.Close("EachPart","EachPartDV")
+			f.Intrinsic.Control.EndIf	
+			f.Intrinsic.String.Build("Location = '{0}'",v.Args.sLoc,v.Local.sFilter)
+			f.Data.DataView.Create("EachPart","EachPartDV",22,v.Local.sFilter,"Date_Item_Prom ASC")
+			f.Intrinsic.Control.If(v.DataTable.EachPartEachLoc.Exists)
+				f.Data.DataTable.Close("EachPartEachLoc")
+			f.Intrinsic.Control.EndIf
+			f.Data.DataView.ToDataTable("EachPart","EachPartDV","EachPartEachLoc",True)				
+			'Fill Customer Name
+			f.Data.DataTable.FillFromDictionary("EachPartEachLoc","CustomerDict","Customer","Name")		
+			'Fill Current_Reserved
+			'point
+			f.Data.DataTable.FillFromDictionary("EachPartEachLoc","CurReservedDict","SOLine","Current_Reserved")
+
+			f.Intrinsic.Control.CallSub("Add_To_MainTable")			
+			f.Data.DataTable.Compute("EachPartEachLoc","Sum(Qty_BO)","",v.Local.fTotalOpenQty)
+	f.Intrinsic.Control.EndSelect	
+	
+	'***Calculate Available = Onhand - allCurrentReserved
+	f.Intrinsic.String.Build("{0}-{1}",v.Args.sPart,v.Args.sLoc,v.Local.sPartLoc)
+	v.Local.fOnhand.Set(v.Dictionary.OnhandDict![v.Local.sPartLoc])
+	v.Local.fAllCurrentReserved.Set(v.Dictionary.AllCurReservedDict![v.Local.sPartLoc])
+	'BN, Aug 19, 2019 Change fAvailable = Onhand - Qty_Required
+	'f.Intrinsic.Math.Sub(v.Local.fOnhand,v.Local.fAllCurrentReserved,v.Local.fAvailable)
+	v.Local.fAvailable.Set(v.Dictionary.QtyAvailableDict![v.Local.sPartLoc])
+	
+	'Add Total
+	f.Intrinsic.String.Build("Total Loc {0}",v.Args.sLoc,v.Local.sLabelTotal)
+	f.Data.DataTable.AddRow("MainTB","Location",v.Args.sLoc,"Part",v.Args.sPart,"Total",v.Local.sLabelTotal,"Qty_OnHand",v.Local.fOnhand,"Available",v.Local.fAvailable,"TotalOpenQty",v.Local.fTotalOpenQty,"TotalCurrentReserved",v.Local.fAllCurrentReserved)
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Add_One_Location_Data.End
+
+Program.Sub.Add_To_MainTable.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.iCnt.Declare
+	v.Local.sDate.Declare
+	v.Local.fCurrentReserved.Declare
+	v.Local.sSOLine.Declare
+	
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.EachPartEachLoc.RowCount--,1)
+		f.Intrinsic.String.Format(v.DataTable.EachPartEachLoc(v.Local.iCnt).Date_Item_Prom!FieldValString,"MM-DD-YYYY",v.Local.sDate)
+		'Process null
+		v.Local.fCurrentReserved.Set(v.DataTable.EachPartEachLoc(v.Local.iCnt).Current_Reserved!FieldValString)
+		v.Local.sSOLine.Set(v.DataTable.EachPartEachLoc(v.Local.iCnt).SOLine!FieldValString)
+		'Add Row		
+		f.Data.DataTable.AddRow("MainTB","Location",v.DataTable.EachPartEachLoc(v.Local.iCnt).Location!FieldValString,"Part",v.DataTable.EachPartEachLoc(v.Local.iCnt).Part!FieldValString,"SOLine",v.Local.sSOLine.left11,"Customer",v.DataTable.EachPartEachLoc(v.Local.iCnt).Customer!FieldValString,"Name",v.DataTable.EachPartEachLoc(v.Local.iCnt).Name!FieldValString,"Order_Ship_ID",v.DataTable.EachPartEachLoc(v.Local.iCnt).Order_Ship_ID!FieldValString,"Qty_Ordered",v.DataTable.EachPartEachLoc(v.Local.iCnt).Qty_Ordered!FieldValString,"Qty_Shipped",v.DataTable.EachPartEachLoc(v.Local.iCnt).Qty_Shipped!FieldValString,"Qty_BO",v.DataTable.EachPartEachLoc(v.Local.iCnt).Qty_BO!FieldValString,"Current_Reserved",v.Local.fCurrentReserved,"Date_Item_PromDATE",V.Local.sDate)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Add_To_MainTable.End
+
+Program.Sub.Format_Grid.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sLableTotal.Declare
+	v.Local.iCnt.Declare
+	v.Local.bExist.Declare	
+	
+	Gui.Form.gsReserv.SuspendLayout()
+	'General format for the grid
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","AllowSort",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","AllowFilter",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","OptionsFindAlwaysVisible",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","EnableAppearanceOddRow",False)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","OptionsViewShowAutoFilterRow",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","AllowColumnResizing",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","OptionsViewColumnAutoWidth",False)
+	
+	f.Intrinsic.Variable.ArgExists("RESETCOL",V.Local.bExist)
+	F.Intrinsic.Control.If(V.Local.bExist)
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Num","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Group","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Part","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Location","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","LocDescr","Visible",True)			
+		gui.Form.gsReserv.SetColumnProperty("GVMain","SOLine","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Date_Item_PromDATE","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Customer","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Name","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Order_Ship_ID","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Total","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_OnHand","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Available","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_BO","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","TotalOpenQty","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","Current_Reserved","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","TotalCurrentReserved","Visible",True)	
+		gui.Form.gsReserv.SetColumnProperty("GVMain","LotBin","Visible",True)
+		gui.Form.gsReserv.SetColumnProperty("GVMain","SO","Visible",True)
+		gui.Form.gsReserv.SetColumnProperty("GVMain","PO","Visible",True)
+	F.Intrinsic.Control.EndIf
+	
+	'Invisible
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_Ordered,Qty_Shipped,SO","sProperty","Invisible")	
+	'Visible Index	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Num","VisibleIndex",0)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Group","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Part","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Location","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","LocDescr","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","SOLine","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","PO","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Date_Item_PromDATE","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Customer","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Name","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Order_Ship_ID","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Total","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_OnHand","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Available","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_BO","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","TotalOpenQty","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","Current_Reserved","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","TotalCurrentReserved","VisibleIndex",v.Local.iCnt.++)	
+	gui.Form.gsReserv.SetColumnProperty("GVMain","LotBin","VisibleIndex",v.Local.iCnt.++)	
+	''Width	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Location","sProperty","MinWidth","sWidth","45")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Location","sProperty","MaxWidth","sWidth","45")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Group","sProperty","MinWidth","sWidth","50")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Group","sProperty","MaxWidth","sWidth","50")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Part","sProperty","Width","sWidth","120")
+	'f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Part","sProperty","MaxWidth","sWidth","220")	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Customer","sProperty","MinWidth","sWidth","60")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Customer","sProperty","MaxWidth","sWidth","60")	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Order_Ship_ID","sProperty","MinWidth","sWidth","60")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Order_Ship_ID","sProperty","MaxWidth","sWidth","60")
+
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","LocDescr","sProperty","Width","sWidth","100")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","SOLine","sProperty","Width","sWidth","80")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Date_Item_PromDATE","sProperty","Width","sWidth","75")
+
+	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Name","sProperty","Width","sWidth","100")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","TotalOpenQty,TotalCurrentReserved","sProperty","Width","sWidth","85")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Current_Reserved","sProperty","Width","sWidth","85")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_OnHand,Available,Qty_BO,Qty_Ordered,Qty_Shipped","sProperty","Width","sWidth","85")
+	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Total","sProperty","Width","sWidth","70")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","LotBin","sProperty","Width","sWidth","60")
+	'Caption
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Location@!@Loc,LocDescr@!@Loc Description,SOLine@!@Order-Line,Date_Item_PromDATE@!@Due Date,Customer@!@Cust.,Order_Ship_ID@!@ShipID,Total@!@Total Loc,Qty_Onhand@!@Onhand,TotalOpenQty@!@Total Open Qty,TotalCurrentReserved@!@Total Cur.Resv,Qty_BO@!@Open Qty,Current_Reserved@!@Current Resv.,LotBin@!@Lot/Bin","sProperty","Caption")		
+	'Header Font bold
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Group,Part,Location,LocDescr,SOLine,Date_Item_PromDATE,Customer,Name,Order_Ship_ID,Qty_BO,TotalCurrentReserved,TotalOpenQty,Current_Reserved,Available,Total,Qty_OnHand,LotBin,Qty_Ordered,Qty_Shipped,SO,PO","sProperty","HeaderFontBold")
+	gui.Form.gsReserv.SetColumnProperty("GVMain","LotBin","HeaderHAlignment","center")
+	'For_CellValue_Changed
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Current_Reserved","sProperty","For_CellValue_Changed")	
+	'For_Row_CellClick
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","SOLine,LotBin,Part","sProperty","For_RowCell_Click")
+
+	'HeaderHAlignment_Far	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Qty_BO,Current_Reserved,Available,Qty_Onhand","sProperty","HeaderAllign_Far")
+	'Format Display Numeric
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_BO,Current_Reserved,Available,Qty_Onhand,TotalOpenQty,TotalCurrentReserved","sProperty","Decimal_1")	
+	
+	'Fixed columns left
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Group,Part,Location,LocDescr,SOLine,SO,PO,Date_Item_PromDATE,Customer","sProperty","FixedColumn_Left")
+
+	'Set backcolor to pink for underlined Location cell 
+	gui.Form.gsReserv.AddStyleFormatCondition("GVMain","Location","tagLocation","equal",v.Screen.Form!lblLoc.Text)
+	gui.Form.gsReserv.SetStyleFormatConditionProperty("GVMain","Location","tagLocation","backcolor","PeachPuff")
+	'Set forcolor to red for SOLine cell 
+	gui.Form.gsReserv.AddStyleFormatCondition("GVMain","SOLine","tagSOLine","equal",v.Screen.Form!lblSOLineDisplay.Text)
+	gui.Form.gsReserv.SetStyleFormatConditionProperty("GVMain","SOLine","tagSOLine","forecolor","Red")	
+
+	'Display date
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Date_Item_PromDATE","DisplayCustomDatetime","d")
+	'Set Backcolor column
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","TotalOpenQty","CellBackColor","LightGreen")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_BO","CellBackColor","LightGreen")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","TotalCurrentReserved","CellBackColor","LightBlue")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Current_Reserved","CellBackColor","LightBlue")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_Onhand","CellBackColor","LightYellow")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Available","CellBackColor","LightSalmon")
+	
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","SOLine","CellForeColor","Blue")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Part","CellForeColor","DarkGreen")
+	
+	'Editor button
+	gui.Form.gsReserv.ColumnEdit("GVMain","LotBin","editorbutton","Lot/Bin")
+	
+	'Summary item
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_Onhand,Qty_BO,Available,TotalOpenQty,TotalCurrentReserved,Current_Reserved","sProperty","SummaryItem")
+	
+	gui.Form.gsReserv.ResumeLayout()
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)	
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Format_Grid.End
+
+Program.Sub.FormatBulk.Start
+f.Intrinsic.Control.Try
+	V.Local..BulkDeclareString(sError,sColumns,sHold)
+	v.Local..BulkDeclareLong(iCnt)
+	
+	f.Intrinsic.String.Split(v.Args.sInputColumns,",",v.Local.sColumns)
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.Local.sColumns.UBound,1)
+		F.Intrinsic.Control.SelectCase(v.Args.sProperty)
+			F.Intrinsic.Control.Case("MinWidth")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"MinWidth",v.Args.sWidth)
+			F.Intrinsic.Control.Case("MaxWidth")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"MaxWidth",v.Args.sWidth)
+			F.Intrinsic.Control.Case("Width")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"Width",v.Args.sWidth)
+			F.Intrinsic.Control.Case("Invisible")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"Visible",False)
+			F.Intrinsic.Control.Case("VisibleIndex")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"VisibleIndex",v.Local.iCnt)
+			F.Intrinsic.Control.Case("Caption")
+				f.Intrinsic.String.Split(v.Local.sColumns(v.Local.iCnt),"@!@",v.Local.sHold)
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sHold(0),"Caption",v.Local.sHold(1))
+			F.Intrinsic.Control.Case("HeaderAllign_Far")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"HeaderHAlignment","Far")
+			F.Intrinsic.Control.Case("HeaderFontBold")	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"HeaderFontBold",True)
+			F.Intrinsic.Control.Case("Decimal_1")	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"DisplayCustomNumeric","###,###,###,##0.00")
+			f.Intrinsic.Control.Case("CellBackColor")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"CellBackColor",v.Args.sColor)
+			f.Intrinsic.Control.Case("For_CellValue_Changed")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"AllowEdit",True)	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"ReadOnly",False)
+			f.Intrinsic.Control.Case("For_RowCell_Click")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"AllowEdit",False)	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"ReadOnly",True)
+			f.Intrinsic.Control.Case("FixedColumn_Left")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"Fixed","Left")
+			f.Intrinsic.Control.Case("Link")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"CellForeColor","Blue")
+			f.Intrinsic.Control.Case("SummaryItem")
+				f.Intrinsic.String.Build("Sum_{0}",v.Local.sColumns(v.Local.iCnt),v.Local.sHold)
+				gui.Form.[v.Args.GS].AddSummaryItem(v.Args.GV,v.Local.sColumns(v.Local.iCnt),v.Local.sHold,"Sum","","","n")
+			F.Intrinsic.Control.EndSelect		
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.FormatBulk.End
+
+Program.Sub.gsReserv_CellValueChanged.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSOLine.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fCurrentReserved.Declare
+	v.Local.fNewReserved.Declare
+	v.Local.sRow.Declare	
+	v.Local.sLocProcess.Declare
+	v.Local.sHold.Declare
+	v.Local.sTotalLabel.Declare
+	v.Local.sPartProcess.Declare
+	
+	f.Intrinsic.Control.If(v.Args.Column,=,"Current_Reserved")
+		v.Local.sSOLine.Set(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValString)
+		v.Local.sTotalLabel.Set(v.DataTable.MainTB(v.Args.RowIndex).Total!FieldValString)		
+		f.Intrinsic.Control.If(v.Local.sTotalLabel.left5,=,"Total")	
+			f.Data.DataTable.SetValue("MainTB",v.Args.RowIndex,"Current_Reserved",0)
+			f.Intrinsic.UI.Msgbox("You can not change value in this cell")
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+	
+		gui.Form.gsReserv.GetCellValueByColumnName("GVMain","Current_Reserved",v.Args.RowIndex,v.Local.fNewReserved)			
+		'Get Current_Reserved
+		f.Intrinsic.String.Split(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValString,"-",v.Local.sSOLine)	
+		'Format Line to be 4 chars
+		f.Intrinsic.String.Build("{0}0",v.Local.sSOLine(1),v.Local.sSOLine(1))
+		f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",v.Local.sSOLine(0),v.Local.sSOLine(1),v.Local.sSQL)
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		v.Local.fCurrentReserved.Set(v.Local.sRet)
+		'Validate New Reserve must not be negative
+		f.Intrinsic.Control.If(v.Local.fNewReserved,<,0)
+			f.Intrinsic.UI.Msgbox("Please enter a positive number","Invalid number")
+			f.Data.DataTable.SetValue("MainTB",v.Args.RowIndex,"Current_Reserved",v.Local.fCurrentReserved)
+			'this will not save
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+		
+		'Get Available Qty
+		f.Intrinsic.Control.CallSub("Get_Available_Qty","sPart",v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,"sLoc",v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString)		
+		
+		f.Intrinsic.Control.If(v.Local.fNewReserved,>,v.DataTable.MainTB(v.Args.RowIndex).Qty_BO!FieldValFloat)
+			f.Intrinsic.UI.Msgbox("Reserved must not be greater than Open Quantity","Invalid Reserved Quantity")
+			f.Data.DataTable.SetValue("MainTB",v.Args.RowIndex,"Current_Reserved",v.Local.fCurrentReserved)
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf		
+		
+		'At this point it is good to save
+		'Save to GCG_5210_Reserve. If there is no record (key SO, Line), Insert new line. If there is, Update line
+		f.Intrinsic.String.Build("Select SO,Line from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",v.Local.sSOLine(0),v.Local.sSOLine(1),v.Local.sSql)		
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		f.Intrinsic.Control.If(v.Local.sRet,=,"")
+			f.Intrinsic.String.Build("Insert into GCG_5210_Reserve (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Caller.User,v.Local.sSql)
+		f.Intrinsic.Control.Else		
+			f.Intrinsic.String.Build("Update GCG_5210_Reserve set Part = '{2}', Loc = '{3}',Current_Reserved = {4},Qty_Reserved = {5},View_User = '{6}',Date_Reserved = Now() where SO = '{0}' and Line = '{1}'",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Caller.User,v.Local.sSql)
+		f.Intrinsic.Control.EndIf		
+
+		f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+
+		
+		'BN,Feb 2019, Insert to History*****************************
+		f.Intrinsic.Control.If(v.DataTable.MainTB(v.Args.RowIndex).Order_Ship_ID!FieldValString,=,"#ToRelease")
+			f.Intrinsic.String.Build("Released by {0}",v.Caller.User,v.Local.sHold)
+			f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Local.sHold,v.Local.sSql)
+			f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+		f.Intrinsic.Control.Else
+			f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Caller.User,v.Local.sSql)
+			f.ODBC.Connection!conx.Execute(v.Local.sSQL)		
+		
+		f.Intrinsic.Control.EndIf		
+
+		'***********************************************************
+		
+		'Set Available and all Current Reserved of the underlined part,loc
+		v.Local.sLocProcess.Set(v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString)
+		v.Local.sPartProcess.Set(v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString)
+		'Get total Row number
+		f.Intrinsic.String.Build("Total = 'Total Loc {0}' and Part = '{1}'",v.Local.sLocProcess,v.Local.sPartProcess,v.Local.sHold)
+		f.Data.DataTable.Select("MainTB",v.Local.sHold,v.Local.sRow)
+		
+		f.Intrinsic.Control.CallSub("Get_Available_Qty","sPart",v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,"sLoc",v.Local.sLocProcess)
+		f.Data.DataTable.SetValue("MainTB",v.Local.sRow,"Available",v.Args.fAvailableQty)
+		f.Intrinsic.Control.CallSub("Get_All_Current_Reserved","sPart",v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,"sLoc",v.Local.sLocProcess)
+		f.Data.DataTable.SetValue("MainTB",v.Local.sRow,"TotalCurrentReserved",v.Args.fAllcurrentReservedQty)
+		
+	f.Intrinsic.Control.EndIf	
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+
+Program.Sub.gsReserv_CellValueChanged.End
+
+Program.Sub.gsReserv_RowCellClick.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSO.Declare
+	v.Local.sParam.Declare
+	v.Local.sMsg.Declare
+	v.Local.sCurrentSO.Declare
+	V.Local.iX.Declare
+	v.Local.iY.Declare
+	
+	
+	Gui.Form.gsReserv.GetCellValueByColumnName("GVMain","Part",v.Args.rowIndex,v.Global.sPart)
+	Gui.Form.gsReserv.GetCellValueByColumnName("GVMain","Location",v.Args.rowIndex,v.Global.sLoc)	
+	
+	f.Intrinsic.Control.If(v.Args.Column.UCase,=,"LOTBIN")
+		f.Intrinsic.UI.Msgbox("Will display lot/bin")
+	f.Intrinsic.Control.ElseIf(v.Args.Column.UCase,=,"SOLINE")
+		f.Intrinsic.Control.If(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValString,=,v.Screen.Form!lblSOLine.Text)
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+		
+		f.Intrinsic.String.Split(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValTrim,"-",v.Local.sSO)
+		f.Intrinsic.String.Split(v.Screen.Form!lblSOLine.Text,"-",v.Local.sCurrentSO)			
+		f.Intrinsic.Control.If(v.Local.sSO(0),<>,v.Local.sCurrentSO(0).Trim,and,v.Local.sSO(0).Trim,<>,"")
+			F.Intrinsic.String.Concat(v.Local.sSO(0),"!*!","O","!*!","*!*ZDR*!*",v.Local.sParam)
+			f.Intrinsic.String.Build("Open Sales Order {0}",v.Local.sSO(0),v.Local.sMsg)
+			f.Intrinsic.UI.InvokeWaitDialog(v.Local.sMsg)
+			F.Global.General.CallWrapperASync(200000,V.Local.sParam)
+			f.Intrinsic.UI.CloseWaitDialog
+		f.Intrinsic.Control.EndIf
+		
+	F.Intrinsic.Control.ElseiF(V.Args.Column.UCase,=,"PART")	
+			f.Intrinsic.API.GetMousePosition(v.Local.iX,v.Local.iY)
+			f.Intrinsic.Math.Add(v.Local.iY,15,v.Local.iY)	
+			GUI.Form..ContextMenuShow("PartMaster",v.Local.iX,v.Local.iY)	
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.gsReserv_RowCellClick.End
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''End Reserve Grid''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Program.Sub.Get_Available_Qty.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.fAvailable.Declare
+	v.Local.sPartLoc.Declare
+	
+	'BN, comment section below is obsolete
+	'Get OnHand qty
+	'f.Intrinsic.Control.CallSub("Get_OnHand_Qty","sPart",v.args.sPart,"sLoc",V.args.sLoc)
+	'Get all reserved qty of this part
+	'f.Intrinsic.Control.CallSub("Get_All_Current_Reserved","sPart",v.args.sPart,"sLoc",V.args.sLoc)	
+	'Available Qty = Onhand Qty - all reserved qty
+	'f.Intrinsic.Math.Sub(v.args.fOnHand_Qty,v.args.fAllCurrentReservedQty,v.Local.fAvailable)
+		
+	'BN, Aug 19, 2019
+	'Change Available qty formula; Available = Onhand - Required
+	f.Intrinsic.String.Build("{0}-{1}",v.args.sPart,v.Args.sLoc,v.Local.sPartLoc)
+	v.Local.fAvailable.Set(v.Dictionary.QtyAvailableDict![v.Local.sPartLoc])
+	f.Intrinsic.Variable.AddRV("fAvailableQty",v.Local.fAvailable)
+	
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_Available_Qty.End
+
+Program.Sub.Get_OnHand_Qty.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fOnHand.Declare
+
+	'Get all OnHand qty of this part
+	f.Intrinsic.String.Build("Select Qty_OnHand from V_Inventory_MSTR where Part = '{0}' and Location = '{1}'",v.args.sPart,V.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	'Get AllCurrentReserved Dict
+	v.Local.fOnHand.Set(v.Local.sRet)
+	f.Intrinsic.Variable.AddRV("fOnHand_Qty",v.Local.fOnHand)
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_OnHand_Qty.End
+
+Program.Sub.Get_All_Current_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fAllReserved.Declare
+
+	'Get all reserved qty of this part
+	f.Intrinsic.String.Build("Select sum(current_Reserved) from GCG_5210_Reserve where current_Reserved <> 0 and Part = '{0}' and loc = '{1}'",v.args.sPart,V.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)	
+	v.Local.fAllReserved.Set(v.Local.sRet)
+	f.Intrinsic.Variable.AddRV("fAllCurrentReservedQty",v.Local.fAllReserved)
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")	
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_All_Current_Reserved.End
+
+Program.Sub.Get_Current_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fReserved.Declare
+
+	'Get all reserved qty of this part
+	f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}' and Part = '{2}' and loc = '{3}'",v.Args.sSO,v.Args.sLine,v.args.sPart,V.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)	
+	v.Local.fReserved.Set(v.Local.sRet)
+	f.Intrinsic.Variable.AddRV("fCurrentReservedQty",v.Local.fReserved)
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_Current_Reserved.End
+
+Program.Sub.Reserved_Validation.Start
+'This sub is attached to pre save hook
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.bOK.Declare
+	V.Local.fQty.Declare
+	v.Local.fNewReserved.Declare
+
+	'Check Reserved Qty is numeric and positive
+	f.Intrinsic.Math.IsNumeric(v.Passed.GAB-TEXT-2.Trim,v.Local.bOK)	
+	f.Intrinsic.Control.If(v.Local.bOK.Not)
+		f.Intrinsic.UI.Msgbox("Reserved must be numeric")
+		'Halt the saving
+		v.Passed.777777.Set(1)
+		f.Intrinsic.Control.ExitSub
+	f.Intrinsic.Control.Else
+		f.Intrinsic.Control.If(v.Passed.GAB-TEXT-2,<,0)
+			f.Intrinsic.UI.Msgbox("Reserved must not be negative")
+			'Halt the saving
+			v.Passed.777777.Set(1)
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.EndIf
+	
+	'The new reserved exceeds the qty	
+	v.Local.fNewReserved.Set(v.Passed.GAB-TEXT-2.Trim)
+	v.Local.fQty.Set(Variable.Passed.000001)
+	f.Intrinsic.Control.If(v.Local.fNewReserved,>,v.Local.fQty)
+		f.Intrinsic.UI.Msgbox("Reserved must not be greater than Order Quantity","Invalid Reserved Quantity")
+		f.Intrinsic.Control.CallSub("Get_Current_Reserved","sPart",v.Args.sPart,"sLoc",v.Args.sLoc,"sSO",v.Args.sSO,"sLine",v.Args.sLine)		
+		v.Passed.GAB-TEXT-2.Set(v.Args.fCurrentReservedQty)
+		'Halt the saving
+		v.Passed.777777.Set(1)
+		f.Intrinsic.Control.ExitSub
+	f.Intrinsic.Control.EndIf
+		
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.Reserved_Validation.End
+
+Program.Sub.Save_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.sSO.Declare
+	v.Local.sLine.Declare
+	
+	'Save to GCG_5210_Reserve. If there is no record (key SO, Line), Insert new line. If there is, Update line
+	f.Intrinsic.String.Build("Select SO,Line from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",Variable.Args.sSO,Variable.Args.sLine,v.Local.sSql)		
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,=,"")
+		f.Intrinsic.String.Build("Insert into GCG_5210_Reserve (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",V.Args.sSO,V.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Args.fQtyReserved,v.Args.fQtyReserved,v.Caller.User,v.Local.sSql)
+	f.Intrinsic.Control.Else
+		f.Intrinsic.String.Build("Update GCG_5210_Reserve set Part = '{2}', Loc = '{3}',Current_Reserved = {4},Qty_Reserved = {5},View_User = '{6}',Date_Reserved = Now() where SO = '{0}' and Line = '{1}'",V.Args.sSO,V.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Args.fQtyReserved,v.Args.fQtyReserved,v.Caller.User,v.Local.sSql)
+	f.Intrinsic.Control.EndIf
+	f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	
+	'BN, Feb 2019, insert to History******************************************************************
+	f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",V.Args.sSO,V.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Args.fQtyReserved,v.Args.fQtyReserved,v.Caller.User,v.Local.sSql)	
+	f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	'*************************************************************************************************
+	
+	v.Passed.GAB-TEXT-1.Set("")
+	v.Passed.GAB-TEXT-2.Set("")
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Save_Reserved.End
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''Timer in Reserve window'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''End Timer'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Program.Sub.UnLoad.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+
+	F.Intrinsic.Control.If(V.ODBC.conx.State,=,1)
+		F.ODBC.Connection!conx.close
+	F.Intrinsic.Control.EndIf
+	
+	f.Intrinsic.Control.End
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.UnLoad.End
+
+Program.Sub.Form_UnLoad.Start
+f.Intrinsic.Control.If(v.Global.bLoad)
+	f.Intrinsic.Control.CallSub(Serialize)
+f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.CallSub("Unload")
+Program.Sub.Form_UnLoad.End
+
+Program.Sub.cmdRefresh_Click.Start
+'gui.Form.timerAutoRefresh.Enabled(False)
+f.Intrinsic.Control.BlockEvents
+f.Intrinsic.Control.If(v.Global.bLoad)
+	f.Intrinsic.Control.CallSub(Serialize)
+f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.CallSub("Refresh")
+f.Intrinsic.Control.UnBlockEvents
+Program.Sub.cmdRefresh_Click.End
+
+Program.Sub.Validate_Shipment.Start
+V.Local.sError.Declare
+V.Local.iRow.Declare
+V.Local.iC.Declare
+V.Local.sReadRow.Declare
+V.Local.sSQL.Declare
+v.Local.sSO.Declare
+V.Local.sLine.Declare
+v.Local.fQty.Declare
+v.Local.sRet.Declare
+v.Local.fCurrentReserved.Declare
+v.Local.sMsg.Declare
+
+F.Intrinsic.BDF.Load("AUX001","AUX001")
+F.Intrinsic.BDF.Clone("AUX001","Clone")
+F.Intrinsic.BDF.ReadRowCount("AUX001",V.Local.iRow)
+F.Intrinsic.Math.Sub(V.Local.iRow,1,V.Local.iRow)
+
+F.Intrinsic.Control.For(V.Local.iC,0,V.Local.iRow,1)
+	'Read row and check for additional qty
+	F.Intrinsic.BDF.ReadRow("AUX001",V.Local.iC,V.Local.sReadRow)
+	F.Intrinsic.String.Split(V.Local.sReadRow,"|~|",V.Local.sReadRow)
+	f.Intrinsic.String.LPad(v.Local.sReadRow(0),"0",7,v.Local.sSO)
+	f.Intrinsic.String.LPad(v.Local.sReadRow(1),"0",3,v.Local.sLine)
+	f.Intrinsic.String.Build("{0}0",v.Local.sLine,v.Local.sLine)
+	v.Local.fQty.Set(v.Local.sReadRow(3))
+	f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",v.Local.sSO,v.Local.sLine,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	v.Local.fCurrentReserved.Set(v.Local.sRet)
+	
+	f.Intrinsic.Control.If(v.Local.fQty,>,v.Local.fCurrentReserved)
+		f.Intrinsic.String.Build("Can not ship. Order: {0}-{1} current reserved is {2}.",v.Local.sSO,v.Local.sLine,v.Local.fCurrentReserved,v.Local.sMsg)
+		f.Intrinsic.UI.Msgbox(v.Local.sMSG)		
+		'Halt shipping
+		V.Passed.777777.Set(1)
+		f.Intrinsic.Control.ExitSub		
+	f.Intrinsic.Control.EndIf	
+F.Intrinsic.Control.Next(V.Local.iC)
+
+'Update Current reserved
+F.Intrinsic.Control.For(V.Local.iC,0,V.Local.iRow,1)
+	'Read row and check for additional qty
+	F.Intrinsic.BDF.ReadRow("AUX001",V.Local.iC,V.Local.sReadRow)
+	F.Intrinsic.String.Split(V.Local.sReadRow,"|~|",V.Local.sReadRow)
+	f.Intrinsic.String.LPad(v.Local.sReadRow(0),"0",7,v.Local.sSO)
+	f.Intrinsic.String.LPad(v.Local.sReadRow(1),"0",3,v.Local.sLine)
+	f.Intrinsic.String.Build("{0}0",v.Local.sLine,v.Local.sLine)
+	v.Local.fQty.Set(v.Local.sReadRow(3))	
+	'Update current reserved
+	f.Intrinsic.String.Build("Update GCG_5210_Reserve set Current_Reserved = Current_Reserved - {0} where SO = '{1}' and Line = '{2}'",v.Local.fQty,v.Local.sSO,v.Local.sLine,v.Local.sSQL)
+	f.ODBC.Connection!conx.Execute(v.Local.sSQl)	
+F.Intrinsic.Control.Next(V.Local.iC)
+Program.Sub.Validate_Shipment.End
+
+Program.Sub.Suggest_Reserved.Start
+'BN, Aug 19 2019, This section is not for the All Part Reservasion Dashboard. This should be in the GAB script for Order Lines screen 
+
+'f.Intrinsic.Control.Try
+'	v.Local.sError.Declare
+'	v.Local.sSQL.Declare
+'	v.Local.sRet.Declare
+'	v.Local.fQty.Declare
+'	v.Local.fAvailable.Declare	
+
+'	'Check to see if this is a new line or a line with new part, if so, suggest: if qty <= available, reserved = qty, else, reserved = available
+'	f.Intrinsic.String.Build("Select Order_NO,Record_NO,Part,Location from V_Order_Lines where Order_NO = '{0}' and Record_NO = '{1}' and Part = '{2}' and Location = '{3}' and Line_Type = 'S'",v.Args.sSO,v.Args.sLine,v.Args.sPart,v.Args.sLoc,V.Local.SSQL)
+'	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+'	f.Intrinsic.Control.If(v.Local.sRet,=,"")
+'		'This is a new line/or new Part			
+'		v.Local.fQty.Set(Variable.Passed.000001)
+'		v.Local.fAvailable.Set(v.Passed.GAB-TEXT-1)
+'		f.Intrinsic.Control.If(v.Local.fAvailable,>,0)		
+'			f.Intrinsic.Control.If(v.Local.fQty,<=,v.Local.fAvailable)
+'				v.Passed.GAB-TEXT-2.Set(v.Local.fQty)
+'			f.Intrinsic.Control.Else		
+'				v.Passed.GAB-TEXT-2.Set(v.Local.fAvailable)
+'			f.Intrinsic.Control.EndIf		
+'		f.Intrinsic.Control.Else
+'			v.Passed.GAB-TEXT-2.Set("0")
+'		f.Intrinsic.Control.EndIf
+'				
+'	f.Intrinsic.Control.EndIf
+'	
+'F.Intrinsic.Control.Catch
+'	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+'	F.Intrinsic.UI.Msgbox(V.Local.sError)
+'	F.Intrinsic.Control.End	
+'F.Intrinsic.Control.EndTry
+Program.Sub.Suggest_Reserved.End
+
+Program.Sub.Deserialize.Start
+'BN, 14 Feb 2019, add Serialize/Deserialize feature
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	V.Local.sSerialize.Declare	
+	
+	'gvMain
+	F.Global.Registry.ReadValue(V.Caller.User,V.Caller.CompanyCode,"GVMain",5210,1005,6,"",V.Local.sSerialize)
+	F.Intrinsic.Control.If(V.Local.sSerialize.Trim,<>,"")
+		Gui.Form.gsReserv.Deserialize(V.Local.sSerialize)
+	F.Intrinsic.Control.EndIf	
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Deserialize.End
+
+Program.Sub.Serialize.Start
+'BN, 14 Feb 2019, add Serialize/Deserialize feature
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+	V.Local.sSerialize.Declare
+	
+	'GVMain
+	Gui.Form.gsReserv.Serialize("GVMain",V.Local.sSerialize)
+	F.Global.Registry.AddValue(V.Caller.User,V.Caller.CompanyCode,"GVMain",5210,1005,False,"Serialize",False,0,-999.0,1/1/1980,12:00:00 AM,V.Local.sSerialize)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Serialize.End
+
+Program.Sub.txtPartSearch_LostFocus.Start
+'f.Intrinsic.Control.BlockEvents
+'f.Intrinsic.Control.If(v.Global.bLoad)
+'	'f.Intrinsic.Control.CallSub(Serialize)
+'f.Intrinsic.Control.EndIf
+'f.Intrinsic.Control.CallSub("Refresh")
+'f.Intrinsic.Control.UnBlockEvents
+Program.Sub.txtPartSearch_LostFocus.End
+
+Program.Sub.optSinglePart_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+
+	f.Intrinsic.Control.BlockEvents
+		gui.Form.txtPartSearch.BackColor(v.Color.White)
+		gui.Form.txtPartSearch.Enabled(True)
+		gui.Form.txtSOSearch.BackColor(v.Color.Gray)
+		gui.Form.txtSOSearch.Enabled(False)
+		gui.Form.txtCustomerSearch.Enabled(False)
+		gui.Form.txtCustomerSearch.BackColor(v.Color.Gray)			
+		gui.Form.txtPartSearch.SetFocus	
+	f.Intrinsic.Control.UnBlockEvents
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.optSinglePart_Click.End
+
+Program.Sub.optAllParts_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+
+	f.Intrinsic.Control.BlockEvents
+		gui.Form.txtPartSearch.BackColor(v.Color.Gray)
+		gui.Form.txtPartSearch.Enabled(False)
+		gui.Form.txtSOSearch.BackColor(v.Color.Gray)
+		gui.Form.txtSOSearch.Enabled(False)	
+		gui.Form.txtCustomerSearch.Enabled(False)
+		gui.Form.txtCustomerSearch.BackColor(v.Color.Gray)			
+		gui.Form.cmdRefresh.SetFocus
+	f.Intrinsic.Control.UnBlockEvents
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.optAllParts_Click.End
+
+Program.Sub.optSalesOrder_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+
+	f.Intrinsic.Control.BlockEvents
+		gui.Form.txtPartSearch.BackColor(v.Color.Gray)
+		gui.Form.txtPartSearch.Enabled(False)
+		gui.Form.txtSOSearch.BackColor(v.Color.White)
+		gui.Form.txtSOSearch.Enabled(True)
+		gui.Form.txtCustomerSearch.Enabled(False)
+		gui.Form.txtCustomerSearch.BackColor(v.Color.Gray)			
+		gui.Form.txtSOSearch.SetFocus
+	f.Intrinsic.Control.UnBlockEvents
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.optSalesOrder_Click.End
+
+Program.Sub.optCustomerSearch_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+
+	f.Intrinsic.Control.BlockEvents
+		gui.Form.txtPartSearch.BackColor(v.Color.Gray)
+		gui.Form.txtPartSearch.Enabled(False)
+		gui.Form.txtSOSearch.BackColor(v.Color.Gray)
+		gui.Form.txtSOSearch.Enabled(False)
+		gui.Form.txtCustomerSearch.Enabled(True)
+		gui.Form.txtCustomerSearch.BackColor(v.Color.White)			
+		gui.Form.txtCustomerSearch.SetFocus
+	f.Intrinsic.Control.UnBlockEvents
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.optCustomerSearch_Click.End
+
+Program.Sub.cmdCustomerBrowser_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	v.Local.sRet.Declare
+
+	f.Intrinsic.UI.SetBrowserHotTypeAhead(True)	
+	f.Intrinsic.UI.CommonBrowser(205,"",v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,<>,v.Ambient.cancel)
+		f.Intrinsic.String.Split(v.Local.sRet,"*!*",v.Local.sRet)
+		gui.Form.txtCustomerSearch.Text(v.Local.sRet(0).Trim)
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdCustomerBrowser_Click.End
+
+Program.Sub.cmdBrowsePart_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	v.Local.sRet.Declare
+
+	f.Intrinsic.UI.SetBrowserHotTypeAhead(True)	
+	f.Intrinsic.UI.CommonBrowser(105,"",v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,<>,v.Ambient.cancel)
+		f.Intrinsic.String.Split(v.Local.sRet,"*!*",v.Local.sRet)
+		gui.Form.txtPartSearch.Text(v.Local.sRet(0).Trim)
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdBrowsePart_Click.End
+
+Program.Sub.cmdBrowseSalesOrder_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	v.Local.sRet.Declare
+
+	f.Intrinsic.UI.SetBrowserHotTypeAhead(True)	
+	f.Intrinsic.UI.Browser("Sales Order","conx","select o.order_No as OrderNo,c.Name_customer from v_order_header o left join v_customer_master c on o.Customer = c.Customer order by o.Order_No","CODE*!*DESCRIPTION","300*!*500",V.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,<>,v.Ambient.cancel)
+		f.Intrinsic.String.Split(v.Local.sRet,"*!*",v.Local.sRet)
+		gui.Form.txtSOSearch.Text(v.Local.sRet(0).Trim)
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdBrowseSalesOrder_Click.End
+
+Program.Sub.cmdReset_Click.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+
+	F.Global.Registry.AddValue(V.Caller.User,V.Caller.CompanyCode,"GVMain",5210,1005,False,"Serialize",False,0,-999.0,1/1/1980,12:00:00 AM,"")
+	gui.Form.gsReserv.Visible(False)
+	f.Intrinsic.Control.CallSub("Format_Grid","RESETCOL",True)	
+	gui.Form.gsReserv.MainView("GVMain")
+	gui.Form.gsReserv.ClearSorting("GVMain")
+	
+	gui.Form.gsReserv.Visible(True)
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: GCG_5210_Custom_All_Res.g2u {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+
+Program.Sub.cmdReset_Click.End
+
+Program.Sub.Comments.Start
+Program.Sub.Comments.End
