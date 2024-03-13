@@ -1,0 +1,1458 @@
+Program.Sub.ScreenSU.Start
+Gui.Form..Create
+Gui.Form..Caption("Resevation")
+Gui.Form..Size(21255,10665)
+Gui.Form..MinX(0)
+Gui.Form..MinY(0)
+Gui.Form..Position(0,0)
+Gui.Form..BackColor(-2147483633)
+Gui.Form..MousePointer(0)
+Gui.Form..Event(UnLoad,Form_UnLoad)
+Gui.Form.gsReserv.Create(GsGridControl)
+Gui.Form.gsReserv.Size(20730,9255)
+Gui.Form.gsReserv.Position(150,765)
+Gui.Form.gsReserv.Event(CellValueChanged,gsReserv_CellValueChanged)
+Gui.Form.gsReserv.Event(RowCellClick,gsReserv_RowCellClick)
+Gui.Form.timerAutoRefresh.Create(Timer)
+Gui.Form.timerAutoRefresh.Size(1320,495)
+Gui.Form.timerAutoRefresh.Position(16665,90)
+Gui.Form.timerAutoRefresh.Event(Timer,timerAutoRefresh_Timer)
+Gui.Form.txtMinSet.Create(TextBox,"10",True,345,300,0,18090,375,True,1,"Arial",8,-2147483643,2)
+Gui.Form.txtMinSet.NumericOnly(2)
+Gui.Form.txtMinSet.Event(GotFocus,txtMinSet_GotFocus)
+Gui.Form.txtMinSet.Event(LostFocus,txtMinSet_LostFocus)
+Gui.Form.txtSec.Create(TextBox,"",True,360,300,0,18930,375,False,1,"Arial",8,-2147483643,2)
+Gui.Form.txtMin.Create(TextBox,"",True,375,300,0,18480,375,False,1,"Arial",8,-2147483643,2)
+Gui.Form.lblSetMinute.Create(Label,"Set Minute",True,990,255,0,17085,480,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblSetMinute.FontStyle(True,False,False,False,False)
+Gui.Form.lbl1.Create(Label,"Part",True,630,255,0,150,165,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl1.FontStyle(True,False,False,False,False)
+Gui.Form.lbl2.Create(Label,"Loc",True,900,255,0,2205,165,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl2.FontStyle(True,False,False,False,False)
+Gui.Form.lbl3.Create(Label,"Description",True,1290,255,0,3210,165,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl3.FontStyle(True,False,False,False,False)
+Gui.Form.cmdRefresh.Create(Button)
+Gui.Form.cmdRefresh.Size(900,375)
+Gui.Form.cmdRefresh.Position(19995,330)
+Gui.Form.cmdRefresh.Caption("Refresh")
+Gui.Form.cmdRefresh.BackColor(3329434)
+Gui.Form.cmdRefresh.ForeColor(16777215)
+Gui.Form.cmdRefresh.Event(Click,cmdRefresh_Click)
+Gui.Form.cmdStop.Create(Button)
+Gui.Form.cmdStop.Size(570,375)
+Gui.Form.cmdStop.Position(19350,330)
+Gui.Form.cmdStop.Caption("Stop")
+Gui.Form.cmdStop.ForeColor(5275647)
+Gui.Form.cmdStop.Event(Click,cmdStop_Click)
+Gui.Form.lbl4.Create(Label,"Order-Line",True,1350,255,0,6945,150,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lbl4.FontStyle(True,False,False,False,False)
+Gui.Form.lblPart.Create(Label,"Label",True,1935,255,0,150,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblPart.ForeColor(3107669)
+Gui.Form.lblLoc.Create(Label,"Label",True,735,255,0,2205,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblLoc.ForeColor(3107669)
+Gui.Form.lblDescription.Create(Label,"Label",True,3690,255,0,3210,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblDescription.ForeColor(3107669)
+Gui.Form.lblSOLine.Create(Label,"Label",False,750,255,0,6000,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblSOLine.ForeColor(255)
+Gui.Form.lblSOLineDisplay.Create(Label,"Label",True,1560,255,0,6945,465,True,0,"Arial",8,-2147483633,0)
+Gui.Form.lblSOLineDisplay.ForeColor(255)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+v.Global.iSecs.Declare
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'BN, Nov 1, 2018
+'Order Entry > File > Sales Orders > Open > Lines (Short Form)
+'This script will activate 2 labels, 2 texboxes, 1 button.
+'Custom Schedule Shipment will open the Schedule Shipment screen in Short Form the same as in Long Form
+'GAB-TEXT-1 is for Available qty = Onhand Qty - all Current Reserved qty of the part,loc 
+'GAB-TEXT-2 is for Current Reserved Qty of the underlined part,loc
+'Script 1 button is named Reserve, will open a grid and let user to reserve the part on the fly
+
+'Variable.Passed.000071: Part
+'Variable.Passed.000072: Rev
+'Variable.Passed.000074: Loc
+'Variable.Passed.000003: Description
+'Variable.Passed.000001: Order Qty
+'Variable.Passed.000184: Qty_shipped
+'Variable.Passed.000005: ORDER-NUM
+'Variable.Passed.000013: Line number
+'Variable.Passed.000323: Qty Staged
+'Should attach to hook 12450 but do nothing
+
+'BN fixed bug Nov 11, 2018
+'Hook 12440: Populate hook of Order Line screen
+'Hook 12445: Line changed hook of Order Line screen.
+'2 scenarios:
+'Scenario 1: Open Order Header, enter an order number, click Lines button
+'	12440 fires first, then 12445  will fire  if we bring a Line from the grid to the header of the Order Line screen 
+'Scenario 2: Open Supply and Demand screen for a particular part number. Click on a Sales Order, this will jump directly to the Order Line screen.
+'	Hook 12445 fires first, , then hook 12440 fires right away after 12445
+
+'The GAB program GCG_5210_Custom_Reservasion.g2u is attached to those 2 hooks.
+'Current Process: 
+'With hook 12440: Activate hidden controls (2 GAB-LABELs, 2 GAB-TEXTs, 1 GAB-BUTTON)
+'With hook 12445: Get the passed values from the hook 12445, pad values to the right format and set those values to the hidden controls.
+'The problem is that the order of firing the hooks are in a reverse way in the 2 scenarios. 
+'Now I will change the GAB program to run based on the caller switches which are O for scenario 1 and VE for scenario 2
+
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+	f.Intrinsic.Control.If(v.Caller.Hook,=,12440,or,v.Caller.Hook,=,12445)
+		Variable.Passed.000162.Set("Reserve")
+		f.Intrinsic.Control.CallSub("Activate_Hidden_Controls")		
+	f.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.Control.SelectCase(v.Caller.Hook)	
+		'Populate hook
+		F.Intrinsic.Control.Case(12440)
+			'When the Line Screen is opened from Supply and Demand screen
+			f.Intrinsic.Control.If(v.Caller.Switches,=,"VE")
+				f.ODBC.Connection!conx.OpenCompanyConnection
+					f.Intrinsic.Control.CallSub("Set_Values_To_Hidden_Controls")
+				f.ODBC.Connection!conx.Close			
+			f.Intrinsic.Control.EndIf	
+		
+		'Line-changed-Hook: 12445
+		F.Intrinsic.Control.Case(12445)		
+			'When the Line Screen is opened from Order Entry > File > Sales Orders > Open/New > Lines button
+			f.Intrinsic.Control.If(v.Caller.Switches,=,"O",or,v.Caller.Switches,=,"N")
+				f.ODBC.Connection!conx.OpenCompanyConnection
+					f.Intrinsic.Control.CallSub("Set_Values_To_Hidden_Controls")
+				f.ODBC.Connection!conx.Close
+			f.Intrinsic.Control.EndIf	
+			
+		'Load-Part-hook: 12455, this is when user enter a Part number or return a Part number from Part browser		
+		F.Intrinsic.Control.Case(12455)
+			f.ODBC.Connection!conx.OpenCompanyConnection
+				f.Intrinsic.Control.CallSub("Set_Values_To_Hidden_Controls")
+			f.ODBC.Connection!conx.Close			
+		
+		'GAB button 1 (Schedule Shipment) is clicked
+		F.Intrinsic.Control.Case(51589)
+			f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+			f.ODBC.Connection!conx.OpenCompanyConnection
+				f.Intrinsic.Control.CallSub("Check_Line_Exist","sSO",v.Args.sSO,"sLine",v.Args.sLine,"sPart",v.Args.sPart,"sLoc",v.Args.sLoc)
+				f.Intrinsic.Control.If(v.Args.bExist)
+					f.Intrinsic.Control.CallSub("Schedule_Shipment","sSO",v.Args.sSO,"sLine",v.Args.sLine,"fQty",v.Args.fQty)		
+					f.Intrinsic.Control.CallSub("Check_Schedule_Shipment_Transaction","sSO",v.Args.sSO,"sLine",v.Args.sLine)
+				f.Intrinsic.Control.Else
+					f.Intrinsic.UI.Msgbox("Please save the line before Scheduling Shipment")
+				f.Intrinsic.Control.EndIf
+			f.ODBC.Connection!conx.Close	
+			
+		'Hook if Order Qty textbox lost control, will suggest qty if the SO,Line,Part,Loc is a new entry
+		'Suggest as following: Min(Qty,AvailableQty)		
+		F.Intrinsic.Control.Case(12490)
+			f.ODBC.Connection!conx.OpenCompanyConnection
+				f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")	
+				f.Intrinsic.Control.CallSub("Suggest_Reserved","sSO",v.Args.sSO,"sLine",v.Args.sLine,"sPart",v.Args.sPart,"sLoc",v.Args.sLoc)
+			f.ODBC.Connection!conx.Close	
+			
+		'Post Clear hook 12446		
+		F.Intrinsic.Control.Case(12446)
+			v.Passed.GAB-TEXT-1.Set("")
+			v.Passed.GAB-TEXT-2.Set("")	
+			
+		'Post Delete hook 12522, will clear the 2 GAB textboxes and delete the line in custom table GCG_5210_Reserve		
+		F.Intrinsic.Control.Case(12522)
+		
+			v.Passed.GAB-TEXT-1.Set("")
+			v.Passed.GAB-TEXT-2.Set("")
+			f.ODBC.Connection!conx.OpenCompanyConnection
+				f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+				f.Intrinsic.Control.CallSub("Delete_Reserve","sSO",v.Args.sSO,"sLine",v.Args.sLine)
+			f.ODBC.Connection!conx.Close
+			
+		'Pre Save hook, will validate the Reserved Qty. If invalid, will not allow to save
+		F.Intrinsic.Control.Case(12510)			
+			f.ODBC.Connection!conx.OpenCompanyConnection		
+			f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+				f.Intrinsic.Control.CallSub("Reserved_Validation","sPart",v.Args.sPart,"sLoc",v.Args.sLoc,"sSO",v.Args.sSO,"sLine",v.Args.sLine)
+			f.ODBC.Connection!conx.Close
+			
+		'Post-Save hook			
+		F.Intrinsic.Control.Case(12511)	
+			f.ODBC.Connection!conx.OpenCompanyConnection
+				f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+				f.Intrinsic.Control.CallSub("Save_Reserved","sSO",v.args.sSO,"sLine",v.args.sLine,"sPart",v.args.sPart,"sLoc",V.Args.sLoc,"fQtyReserved",v.Passed.GAB-TEXT-2,"fQty",v.Args.fQty)
+			f.ODBC.Connection!conx.Close
+			
+		'Order Entry > Transactions > Shipments > New > Pre Save hook. Will validate if have enough qty reserved, if not, will not allow to ship. If yes, will deduct the qty to the current reserved		
+		F.Intrinsic.Control.Case(28530)	
+			f.ODBC.Connection!conx.OpenCompanyConnection
+			
+				f.Intrinsic.Control.CallSub("Validate_Shipment")
+			f.ODBC.Connection!conx.Close
+			
+		'Order Entry > Transactions > Shipments > New > Post Save hook. Will validate if have enough qty reserved, if yes, will deduct the qty to the current reserved		
+		F.Intrinsic.Control.Case(28532)	
+			f.ODBC.Connection!conx.OpenCompanyConnection
+			
+				f.Intrinsic.Control.CallSub("Deduct_Shipment")
+			f.ODBC.Connection!conx.Close	
+			
+		'Script 1 button (Reserved). Will open the reservation grid and allow user to reserve on the fly for the underlined part,loc	
+		F.Intrinsic.Control.Case(12620)	
+			f.ODBC.Connection!conx.OpenCompanyConnection
+				f.Intrinsic.Control.CallSub("Set_Anchor")			
+				f.Intrinsic.Control.CallSub("Refresh")
+				gui.Form..Show			
+				f.Intrinsic.Control.CallSub("Set_Timer")
+			
+	F.Intrinsic.Control.EndSelect				
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Main.End
+
+Program.Sub.Set_Values_To_Hidden_Controls.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	
+	f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+	f.Intrinsic.Control.CallSub("Get_Available_Qty","sPart",v.args.sPart,"sLoc",v.args.sLoc)		
+	v.Passed.GAB-TEXT-1.Set(v.Args.fAvailableQty)
+	f.Intrinsic.Control.CallSub("Get_Current_Reserved","sPart",v.args.sPart,"sLoc",v.args.sLoc,"sSO",v.Args.sSO,"sLine",v.Args.sLine)	
+	v.Passed.GAB-TEXT-2.Set(v.Args.fCurrentReservedQty)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+
+Program.Sub.Set_Values_To_Hidden_Controls.End
+
+Program.Sub.Set_Anchor.Start
+gui.Form.gsReserv.Anchor(15)
+gui.Form.lblSetMinute.Anchor(9)
+gui.Form.txtMinSet.Anchor(9)
+gui.Form.txtMin.Anchor(9)
+gui.Form.txtSec.Anchor(9)
+gui.Form.cmdRefresh.Anchor(9)
+gui.Form.cmdStop.Anchor(9)
+Program.Sub.Set_Anchor.End
+
+Program.Sub.Format_SO_Line_Part_Loc.Start
+f.Intrinsic.Control.Try
+	'Format values of v.passed to the right format
+	v.Local.sError.Declare
+	v.Local.sSO.Declare
+	v.Local.sLine.Declare
+	v.Local.sSOLine.Declare
+	v.Local.sPart.Declare
+	v.Local.sLoc.Declare
+	v.Local.fQty.Declare
+	
+	'Get passed variables and format
+	f.Intrinsic.String.LPad(Variable.Passed.000005,"0",7,v.Local.sSO)
+	f.Intrinsic.String.LPad(Variable.Passed.000013,"0",3,v.Local.sLine)
+	f.Intrinsic.String.Build("{0}0",v.Local.sLine,v.Local.sLine)
+	f.Intrinsic.String.GSSPartString(Variable.Passed.000071,Variable.Passed.000072,v.Local.sPart)	
+	f.Intrinsic.String.LPad(Variable.Passed.000074," ",2,v.Local.sLoc)
+	f.Intrinsic.String.Build("{0}-{1}",v.Local.sSO,v.Local.sLine,v.Local.sSOLine)
+	v.Local.fQty.Set(Variable.Passed.000001)
+	f.Intrinsic.Variable.AddRV("sPart",v.Local.sPart)
+	f.Intrinsic.Variable.AddRV("sLoc",v.Local.sLoc)
+	f.Intrinsic.Variable.AddRV("sSO",v.Local.sSO)
+	f.Intrinsic.Variable.AddRV("sLine",v.Local.sLine)
+	f.Intrinsic.Variable.AddRV("sSOLine",v.Local.sSOLine)
+	f.Intrinsic.Variable.AddRV("fQty",v.Local.fQty)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Format_SO_Line_Part_Loc.End
+
+Program.Sub.Check_Line_Exist.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	V.Local.sRet.Declare
+	v.Local.bExist.Declare
+	
+	f.Intrinsic.String.Build("Select * from V_Order_Lines where Order_No = '{0}' and Record_No = '{1}' and Part = '{2}' and Location = '{3}'",v.Args.sSO,v.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,<>,"")
+		v.Local.bExist.Set(True)
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Variable.AddRV("bExist",v.Local.bExist)
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Check_Line_Exist.End
+
+Program.Sub.Schedule_Shipment.Start
+f.Intrinsic.Control.Try
+	'Open the Schedule Shipment screen OES085 when the GAB-BTN-1 is clicked in Short Form, as the same as in Long Form
+	v.Local.sError.Declare
+	v.Local.iReturnCode.Declare
+	V.Local.sFileName.Declare
+	
+	F.Global.Callwrapper.New("ScheduleShipment","Sales.OpenShipSchedule")
+	F.Global.Callwrapper.SetProperty("ScheduleShipment","CallingProgram","ORD085")
+	F.Global.Callwrapper.SetProperty("ScheduleShipment","FileType","S")
+	F.Global.Callwrapper.SetProperty("ScheduleShipment","SalesOrder",v.Args.sSO)	
+	F.Global.Callwrapper.SetProperty("ScheduleShipment","SalesOrderLine",v.Args.sLine)
+	F.Global.Callwrapper.SetProperty("ScheduleShipment","Quantity", v.Args.fQty)
+	F.Global.CallWrapper.Run("ScheduleShipment")	
+	F.Global.CallWrapper.GetProperty("ScheduleShipment","ReturnCode",V.Local.iReturnCode)
+	F.Global.CallWrapper.GetProperty("ScheduleShipment","FileName",V.Local.sFileName)
+	
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.Schedule_Shipment.End
+
+Program.Sub.Check_Schedule_Shipment_Transaction.Start
+'Check to see if there are records in OE
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.fOrder.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.sFlagUseMQD.Declare
+	
+	v.Local.fOrder.Set(v.Args.sSO)	
+	f.Intrinsic.String.Build("Select * from v_oe_ship_sched where Order_No = '{0}' and Order_Line = '{1}'",v.Local.fOrder,v.Args.sLine,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,=,"")
+		v.Local.sFlagUseMQD.Set("N")
+	f.Intrinsic.Control.Else
+		v.Local.sFlagUseMQD.Set("Y")		
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.String.Build("Update Order_Lines set Flag_Use_MQD = '{0}' where Order_No = '{1}' and Record_No = '{2}'",v.Local.sFlagUseMQD,v.Args.sSO,v.Args.sLine,v.Local.sSQL)
+	f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+
+Program.Sub.Check_Schedule_Shipment_Transaction.End
+
+Program.Sub.Get_Available_Qty.Start
+'Get available Qty of the underlined part,loc = Qty_OnHand - All reserved qty
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.fAvailable.Declare
+	
+	'Get OnHand qty
+	f.Intrinsic.Control.CallSub("Get_OnHand_Qty","sPart",v.args.sPart,"sLoc",V.args.sLoc)
+	f.Intrinsic.Variable.AddRV("fAvailableQty",v.Args.fAvailable_Qty)
+	
+	'BN, Aug 19 2019 This is obsolete
+	'Get all reserved qty of this part
+	'f.Intrinsic.Control.CallSub("Get_All_Current_Reserved","sPart",v.args.sPart,"sLoc",V.args.sLoc)	
+	'Available Qty = Onhand Qty - all reserved qty
+	'f.Intrinsic.Math.Sub(v.args.fOnHand_Qty,v.args.fAllCurrentReservedQty,v.Local.fAvailable)	
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_Available_Qty.End
+
+Program.Sub.Get_OnHand_Qty.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fOnHand.Declare
+	v.Local.fAvailable.Declare
+
+	'Get all OnHand qty of this part
+	f.Intrinsic.String.Build("Select Top 1 Qty_OnHand,Qty_Onhand - Qty_Required as Qty_Available from V_Inventory_MSTR where Part = '{0}' and Location = '{1}'",v.args.sPart,V.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)	
+	f.Intrinsic.Control.If(v.Local.sRet,=,"")
+		v.Local.fOnHand.Set(0)
+		v.Local.fAvailable.Set(0)
+	f.Intrinsic.Control.Else
+		f.Intrinsic.String.Split(v.Local.sRet,"*!*",v.Local.sRet)
+		v.Local.fOnHand.Set(v.Local.sRet(0))
+		v.Local.fAvailable.Set(v.Local.sRet(1))
+	f.Intrinsic.Control.EndIf
+	
+	f.Intrinsic.Variable.AddRV("fOnHand_Qty",v.Local.fOnHand)
+	f.Intrinsic.Variable.AddRV("fAvailable_Qty",v.Local.fAvailable)
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_OnHand_Qty.End
+
+Program.Sub.Get_All_Current_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fAllReserved.Declare
+
+	'Get all reserved qty of this part
+	f.Intrinsic.String.Build("Select sum(current_Reserved) from GCG_5210_Reserve where Part = '{0}' and loc = '{1}'",v.args.sPart,V.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)	
+	v.Local.fAllReserved.Set(v.Local.sRet)
+	f.Intrinsic.Variable.AddRV("fAllCurrentReservedQty",v.Local.fAllReserved)
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")	
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_All_Current_Reserved.End
+
+Program.Sub.Get_Current_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fReserved.Declare
+
+	'Get all reserved qty of this part
+	f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}' and Part = '{2}' and loc = '{3}'",v.Args.sSO,v.Args.sLine,v.args.sPart,V.Args.sLoc,v.Local.sSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)	
+	v.Local.fReserved.Set(v.Local.sRet)
+	f.Intrinsic.Variable.AddRV("fCurrentReservedQty",v.Local.fReserved)
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Get_Current_Reserved.End
+
+Program.Sub.Reserved_Validation.Start
+'This sub is attached to pre save hook, will validate GAB-TEXT-2 be positive and <= Order Qty
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.bOK.Declare
+	V.Local.fQty.Declare
+	v.Local.fNewReserved.Declare
+
+	'Check Reserved Qty is numeric and positive
+	f.Intrinsic.Math.IsNumeric(v.Passed.GAB-TEXT-2.Trim,v.Local.bOK)	
+	f.Intrinsic.Control.If(v.Local.bOK.Not)
+		f.Intrinsic.UI.Msgbox("Reserved must be numeric")
+		'Halt the saving
+		v.Passed.777777.Set(1)
+		f.Intrinsic.Control.ExitSub
+	f.Intrinsic.Control.Else
+		f.Intrinsic.Control.If(v.Passed.GAB-TEXT-2,<,0)
+			f.Intrinsic.UI.Msgbox("Reserved must not be negative")
+			'Halt the saving
+			v.Passed.777777.Set(1)
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.EndIf
+	
+	'The new reserved exceeds the qty	
+	v.Local.fNewReserved.Set(v.Passed.GAB-TEXT-2.Trim)
+	v.Local.fQty.Set(Variable.Passed.000001)
+	f.Intrinsic.Control.If(v.Local.fNewReserved,>,v.Local.fQty)
+		f.Intrinsic.UI.Msgbox("Reserved must not be greater than Order Quantity","Invalid Reserved Quantity")
+		f.Intrinsic.Control.CallSub("Get_Current_Reserved","sPart",v.Args.sPart,"sLoc",v.Args.sLoc,"sSO",v.Args.sSO,"sLine",v.Args.sLine)		
+		v.Passed.GAB-TEXT-2.Set(v.Args.fCurrentReservedQty)
+		'Halt the saving
+		v.Passed.777777.Set(1)
+		f.Intrinsic.Control.ExitSub
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.Reserved_Validation.End
+
+Program.Sub.Save_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.sSO.Declare
+	v.Local.sLine.Declare
+	v.Local.iFlag.Declare
+	
+	'Save to GCG_5210_Reserve. If there is no record (key SO, Line), Insert new line. If there is, Update line
+	f.Intrinsic.String.Build("Select SO,Line from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",Variable.Args.sSO,Variable.Args.sLine,v.Local.sSql)		
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,=,"")
+		f.Intrinsic.String.Build("Insert into GCG_5210_Reserve (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",V.Args.sSO,V.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Args.fQtyReserved,v.Args.fQtyReserved,v.Caller.User,v.Local.sSql)
+	f.Intrinsic.Control.Else
+		f.Intrinsic.String.Build("Update GCG_5210_Reserve set Part = '{2}', Loc = '{3}',Current_Reserved = {4},Qty_Reserved = {5},View_User = '{6}',Date_Reserved = Now() where SO = '{0}' and Line = '{1}'",V.Args.sSO,V.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Args.fQtyReserved,v.Args.fQtyReserved,v.Caller.User,v.Local.sSql)
+	f.Intrinsic.Control.EndIf
+	f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	
+	'BN, Feb 2019, insert to History**************************
+	f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",V.Args.sSO,V.Args.sLine,v.Args.sPart,v.Args.sLoc,v.Args.fQtyReserved,v.Args.fQtyReserved,v.Caller.User,v.Local.sSql)	
+	f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	'*********************************************************
+	
+'BN took this off because user does not use Schedule Shipment much, so we do not prompt
+'	F.Intrinsic.UI.Msgbox("Do you want to Schedule Shipment?", "Schedule Shipment",4,V.Local.iFlag)
+'	f.Intrinsic.Control.If(v.Local.iFlag,=,6)	
+'		f.Intrinsic.Control.CallSub("Schedule_Shipment","sSO",v.Args.sSO,"sLine",v.Args.sLine,"fQty",v.Args.fQty)		
+'		f.Intrinsic.Control.CallSub("Check_Schedule_Shipment_Transaction","sSO",v.Args.sSO,"sLine",v.Args.sLine)
+'	f.Intrinsic.Control.Endif	
+
+	v.Passed.GAB-TEXT-1.Set("")
+	v.Passed.GAB-TEXT-2.Set("")
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Save_Reserved.End
+
+Program.Sub.Activate_Hidden_Controls.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	
+	'GAB-BTN-1 below Part texbox
+	f.Intrinsic.Variable.SetProperty("GAB-BTN-1","PL",23)
+	F.Intrinsic.Variable.SetProperty("GAB-BTN-1","PT",113)
+	F.Intrinsic.Variable.SetProperty("GAB-BTN-1","PW",100)
+	f.Intrinsic.UI.ChangeCallerProperty(v.Passed.GAB-BTN-1,"HIDE",0)
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.GAB-BTN-1,"LOCK",0)
+	Variable.Passed.GAB-BTN-1.Set("Schedule Shipment")
+	
+	'Change hidden controls: labels and texboxes
+	
+	'LBL and Textbox 1
+	'Set horizontal position
+	f.Intrinsic.Variable.SetProperty("GAB-LBL-1","PL",831)
+	f.Intrinsic.Variable.SetProperty("GAB-TEXT-1","PL",831)
+	'Set vertical position
+	F.Intrinsic.Variable.SetProperty("GAB-LBL-1","PT",29)
+	F.Intrinsic.Variable.SetProperty("GAB-TEXT-1","PT",46)
+	
+	F.Intrinsic.Variable.SetProperty("GAB-LBL-1","PW",80)
+	F.Intrinsic.Variable.SetProperty("GAB-TEXT-1","PW",80)
+	
+	V.Passed.GAB-LBL-1.Set("Available")
+	f.Intrinsic.UI.ChangeCallerProperty(v.Passed.GAB-LBL-1,"HIDE",0)
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.GAB-LBL-1,"LOCK",0)
+	f.Intrinsic.UI.ChangeCallerProperty(v.Passed.GAB-TEXT-1,"HIDE",0)
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.GAB-TEXT-1,"LOCK",1)
+	
+	'LBL and Textbox 2
+	'Set horizontal position
+	f.Intrinsic.Variable.SetProperty("GAB-LBL-2","PL",915)
+	f.Intrinsic.Variable.SetProperty("GAB-TEXT-2","PL",915)
+	'Set vertical position
+	F.Intrinsic.Variable.SetProperty("GAB-LBL-2","PT",29)
+	F.Intrinsic.Variable.SetProperty("GAB-TEXT-2","PT",46)
+	
+	F.Intrinsic.Variable.SetProperty("GAB-LBL-2","PW",80)
+	F.Intrinsic.Variable.SetProperty("GAB-TEXT-2","PW",80)
+	
+	V.Passed.GAB-LBL-2.Set("Reserved")
+	f.Intrinsic.UI.ChangeCallerProperty(v.Passed.GAB-LBL-2,"HIDE",0)
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.GAB-LBL-2,"LOCK",0)
+	f.Intrinsic.UI.ChangeCallerProperty(v.Passed.GAB-TEXT-2,"HIDE",0)
+	F.Intrinsic.UI.ChangeCallerProperty(V.Passed.GAB-TEXT-2,"LOCK",0)	
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")	
+F.Intrinsic.Control.EndTry
+
+Program.Sub.Activate_Hidden_Controls.End
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''Timer in Reserve window'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Program.Sub.Set_Timer.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.iMin.Declare
+	
+	v.Global.iSecs.Set(60)
+	f.Intrinsic.Math.Sub(v.Screen.Form!txtMinSet.Text.Trim,1,v.Local.iMin)
+	gui.Form.txtMin.Text(v.Local.iMin)
+	gui.Form.timerAutoRefresh.Enabled(True)
+	Gui.Form.timerAutoRefresh.Interval(1000)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Set_Timer.End
+
+Program.Sub.timerAutoRefresh_Timer.Start
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	v.Local.iMinute.Declare
+	
+	'Substract 1 sec
+	f.Intrinsic.Math.Sub(v.Global.iSecs,1,v.Global.iSecs)
+	'Set label to current elapsed sec
+	gui.Form.txtSec.Text(v.Global.iSecs)
+	'If sec reach 0, reset sec
+	f.Intrinsic.Control.If(v.Global.iSecs,=,0)	
+		'Reset secs
+		v.Global.iSecs.Set(60)
+		v.Local.iMinute.Set(v.Screen.Form!txtMin.Text)
+		'If reached 0 minute, reset minute
+		f.Intrinsic.Control.If(v.Local.iMinute,=,0)
+			'Refresh
+			gui.Form.timerAutoRefresh.Enabled(False)
+			f.Intrinsic.Control.CallSub("Refresh")
+			f.Intrinsic.Control.CallSub("Set_Timer")
+		f.Intrinsic.Control.Else		
+			f.Intrinsic.Math.Sub(v.Local.iMinute,1,v.Local.iMinute)
+			gui.Form.txtMin.Text(v.Local.iMinute)
+		f.Intrinsic.Control.EndIf		
+	f.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload") 
+F.Intrinsic.Control.EndTry
+
+Program.Sub.timerAutoRefresh_Timer.End
+
+Program.Sub.txtMinSet_GotFocus.Start
+'User put cursor in textbox minute to change. This will stop the timer
+F.Intrinsic.Control.Try
+	V.Local.sError.Declare	
+	gui.Form.timerAutoRefresh.Enabled(False)	
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.txtMinSet_GotFocus.End
+
+Program.Sub.txtMinSet_LostFocus.Start
+'User leaves textbox minute. This will start the timer
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.iMin.Declare
+	
+	v.Local.iMin.Set(v.Screen.Form!txtMinSet.Text.Trim)
+	f.Intrinsic.Control.If(v.Local.iMin,=,0)
+		f.Intrinsic.UI.Msgbox("Please enter a positive number")
+		f.Intrinsic.Control.ExitSub
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.CallSub("Set_Timer")	
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.txtMinSet_LostFocus.End
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''End Timer'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''Reserve Grid''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Program.Sub.Create_MainTB_and_LocRangeTB.Start
+F.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	
+	f.Intrinsic.Control.If(v.DataTable.MainTB.Exists)
+		f.Data.DataTable.Close("MainTB")
+	f.Intrinsic.Control.EndIf
+	F.Data.DataTable.Create("MainTB",True)
+	f.Data.DataTable.AddColumn("MainTB","Group","String")
+	f.Data.DataTable.AddColumn("MainTB","Location","String")
+	f.Data.DataTable.AddColumn("MainTB","LocDescr","String")
+	f.Data.DataTable.AddColumn("MainTB","Part","String")
+	f.Data.DataTable.AddColumn("MainTB","SOLine","String")
+	f.Data.DataTable.AddColumn("MainTB","Date_Item_PromDATE","Date")
+	f.Data.DataTable.AddColumn("MainTB","Customer","String")
+	f.Data.DataTable.AddColumn("MainTB","Name","String")
+	f.Data.DataTable.AddColumn("MainTB","Order_Ship_ID","String")
+	f.Data.DataTable.AddColumn("MainTB","Total","String")
+	f.Data.DataTable.AddColumn("MainTB","Qty_OnHand","Float")
+	f.Data.DataTable.AddColumn("MainTB","Available","Float")
+	f.Data.DataTable.AddColumn("MainTB","TotalOpenQty","Float")
+	f.Data.DataTable.AddColumn("MainTB","TotalCurrentReserved","Float")
+	f.Data.DataTable.AddColumn("MainTB","Qty_Ordered","Float")
+	f.Data.DataTable.AddColumn("MainTB","Qty_Shipped","Float")
+	f.Data.DataTable.AddColumn("MainTB","Qty_BO","Float")
+	f.Data.DataTable.AddColumn("MainTB","Current_Reserved","Float")
+	
+	'Loc 20,22,25
+	f.Intrinsic.Control.If(v.DataTable.Group1.Exists)
+		f.Data.DataTable.Close("Group1")
+	f.Intrinsic.Control.EndIf
+	'21
+	f.Intrinsic.Control.If(v.DataTable.Group2.Exists)
+		f.Data.DataTable.Close("Group2")
+	f.Intrinsic.Control.EndIf
+	'11-15
+	f.Intrinsic.Control.If(v.DataTable.Group3.Exists)
+		f.Data.DataTable.Close("Group3")
+	f.Intrinsic.Control.EndIf
+	'90-99
+	f.Intrinsic.Control.If(v.DataTable.Group4.Exists)
+		f.Data.DataTable.Close("Group4")
+	f.Intrinsic.Control.EndIf
+	'Others
+	f.Intrinsic.Control.If(v.DataTable.Group5.Exists)
+		f.Data.DataTable.Close("Group5")
+	f.Intrinsic.Control.EndIf	
+	
+	f.Data.DataTable.Create("Group1",True)
+	f.Data.DataTable.Create("Group2",True)
+	f.Data.DataTable.Create("Group3",True)
+	f.Data.DataTable.Create("Group4",True)
+	f.Data.DataTable.Create("Group5",True)
+	
+	f.Data.DataTable.AddColumn("Group1","Loc","String")
+	f.Data.DataTable.AddColumn("Group2","Loc","String")
+	f.Data.DataTable.AddColumn("Group3","Loc","String")
+	f.Data.DataTable.AddColumn("Group4","Loc","String")	
+	f.Data.DataTable.AddColumn("Group5","Loc","String")	
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Create_MainTB_and_LocRangeTB.End
+
+Program.Sub.Refresh.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.iCnt.Declare
+	v.Local.sOtherLoc.Declare
+	v.Local.bExist.Declare
+		
+	f.Intrinsic.UI.InvokeWaitDialog("Loading....")
+	
+	f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+	
+	'Set Part, Loc, Description header
+	gui.Form.lblPart.Caption(v.Args.sPart)
+	gui.Form.lblLoc.Caption(v.Args.sLoc)
+	gui.Form.lblDescription.Caption(Variable.Passed.000003)
+	gui.Form.lblSOLine.Caption(v.Args.sSOLine)	
+	gui.Form.lblSOLineDisplay.Caption(v.Args.sSOLine.left11)	
+	f.Intrinsic.Control.CallSub("Create_MainTB_and_LocRangeTB")
+	
+	'Qty_Onhand, Qty_Avai = Qty_Onhand - Qty_Required
+	f.Intrinsic.Control.If(v.DataTable.OnhandAvailable.Exists)
+		f.Data.DataTable.Close("OnhandAvailable")
+	f.Intrinsic.Control.EndIf
+	f.Data.DataTable.CreateFromSQL("OnhandAvailable","conx","Select Part + '-' + Location as PartLoc,qty_onhand, Qty_onhand - Qty_Required as Qty_Available from Inventory_mstr ",True)
+			
+	'Get Qty_OnHand_Dict
+	f.Data.Dictionary.Exists("OnHandDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("OnHandDict")
+	f.Intrinsic.Control.EndIf
+	f.Data.Dictionary.CreateFromDatatable("OnHandDict","OnhandAvailable","PartLoc","Qty_Onhand")
+	f.Data.Dictionary.SetDefaultReturn("OnHandDict",0)
+
+	'Get Qty_Available_Dict
+	f.Data.Dictionary.Exists("QtyAvailableDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("QtyAvailableDict")
+	f.Intrinsic.Control.EndIf	
+	f.Data.Dictionary.CreateFromDatatable("QtyAvailableDict","OnhandAvailable","PartLoc","Qty_Available")
+	f.Data.Dictionary.SetDefaultReturn("QtyAvailableDict",0)
+	
+	'Get AllCurrentReserved Dict
+	f.Data.Dictionary.Exists("AllCurReservedDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("AllCurReservedDict")
+	f.Intrinsic.Control.EndIf
+	f.Data.Dictionary.CreateFromSQL("AllCurReservedDict","conx","Select Part + '-' + Loc as PartLoc ,Sum(Current_Reserved) as AllCurrentReserved from GCG_5210_Reserve group by Part,Loc")
+	f.Data.Dictionary.SetDefaultReturn("AllCurReservedDict",0)
+	'Get CurrentReserved Dict
+	f.Data.Dictionary.Exists("CurReservedDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("CurReservedDict")
+	f.Intrinsic.Control.EndIf		
+	f.Data.Dictionary.CreateFromSQL("CurReservedDict","conx","Select SO + '-' + Line as SOLine,Current_Reserved from GCG_5210_Reserve")
+	f.Data.Dictionary.SetDefaultReturn("CurReservedDict",0)	
+	'Get CustomerName Dict
+	f.Data.Dictionary.Exists("CustomerDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("CustomerDict")
+	f.Intrinsic.Control.EndIf	
+	f.Data.Dictionary.CreateFromSQL("CustomerDict","conx","Select Customer,Name_Customer from V_Customer_Master")
+	f.Data.Dictionary.SetDefaultReturn("CustomerDict",0)	
+	'LocationDescr
+	f.Data.Dictionary.Exists("LocDict",v.Local.bExist)
+	f.Intrinsic.Control.If(v.Local.bExist)
+		f.Data.Dictionary.Close("LocDict")
+	f.Intrinsic.Control.EndIf	
+	f.Data.Dictionary.CreateFromSQL("LocDict","conx","select Location,ltrim(rtrim(Location_Desc)) from V_locations")
+	f.Data.Dictionary.SetDefaultReturn("LocDict","")	
+	
+	'Add current Location to Main table
+	f.Data.DataTable.AddRow("MainTB","Part",v.Screen.Form!lblPart.Text,"Group","Grp 1")
+	f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.Screen.Form!lblPart.Text,"sLoc",v.Screen.Form!lblLoc.Text,"iGroup",0)
+	
+	'Get other locations
+	f.Intrinsic.String.Build("Select Location from Inventory_Mstr where Part = '{0}' and Location <> '{1}' Order by Location",v.Screen.Form!lblPart.Text,v.Screen.Form!lblLoc.Text,v.Local.sSQL)		
+	F.ODBC.Connection!conx.OpenRecordsetRO("rstLoc",V.Local.sSQL)
+		f.Intrinsic.Control.DoUntil(V.ODBC.conx!rstLoc.EOF)	
+			v.Local.sOtherLoc.Set(V.ODBC.conx!rstLoc.FieldVal!Location)
+			
+			f.Intrinsic.Control.SelectCase(v.Local.sOtherLoc)			
+				f.Intrinsic.Control.CaseAny("20","22","25")
+					f.Data.DataTable.AddRow("Group1","Loc",v.Local.sOtherLoc)
+				f.Intrinsic.Control.Case("21")
+					f.Data.DataTable.AddRow("Group2","Loc",v.Local.sOtherLoc)
+				f.Intrinsic.Control.CaseAny("11","12","13","14","15")
+					f.Data.DataTable.AddRow("Group3","Loc",v.Local.sOtherLoc)
+				f.Intrinsic.Control.CaseAny("90","91","92","93","94","95","96","97","98","99")
+					f.Data.DataTable.AddRow("Group4","Loc",v.Local.sOtherLoc)
+				f.Intrinsic.Control.CaseElse
+					f.Data.DataTable.AddRow("Group5","Loc",v.Local.sOtherLoc)
+			f.Intrinsic.Control.EndSelect
+				
+			f.ODBC.conx!rstLoc.MoveNext
+		f.Intrinsic.Control.Loop
+	F.ODBC.conx!rstLoc.Close	
+	
+	'Group 1
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.Group1.RowCount--,1)
+		f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.Screen.Form!lblPart.Text,"sLoc",v.DataTable.Group1(v.Local.iCnt).Loc!FieldValString,"iGroup",1)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	
+	'Group 2
+	f.Intrinsic.Control.If(v.DataTable.Group2.RowCount,>,0)
+		f.Data.DataTable.AddRow("MainTB","Part",v.Screen.Form!lblPart.Text,"Group","Grp 2: Nst")
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.Group2.RowCount--,1)
+		f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.Screen.Form!lblPart.Text,"sLoc",v.DataTable.Group2(v.Local.iCnt).Loc!FieldValString,"iGroup",2)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+
+	'Group 3
+	f.Intrinsic.Control.If(v.DataTable.Group3.RowCount,>,0)
+		f.Data.DataTable.AddRow("MainTB","Part",v.Screen.Form!lblPart.Text,"Group","Grp 3: AL")
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.Group3.RowCount--,1)
+		f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.Screen.Form!lblPart.Text,"sLoc",v.DataTable.Group3(v.Local.iCnt).Loc!FieldValString,"iGroup",3)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	
+	'Group 4
+	f.Intrinsic.Control.If(v.DataTable.Group4.RowCount,>,0)
+		f.Data.DataTable.AddRow("MainTB","Part",v.Screen.Form!lblPart.Text,"Group","Grp 4: TX")
+	f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.Group4.RowCount--,1)
+		f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.Screen.Form!lblPart.Text,"sLoc",v.DataTable.Group4(v.Local.iCnt).Loc!FieldValString,"iGroup",4)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	
+	'Group 5
+	f.Intrinsic.Control.If(v.DataTable.Group5.RowCount,>,0)
+		f.Data.DataTable.AddRow("MainTB","Part",v.Screen.Form!lblPart.Text,"Group","Group 5: Others")
+	f.Intrinsic.Control.EndIf	
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.Group5.RowCount--,1)
+		f.Intrinsic.Control.CallSub("Add_One_Location_Data","sPart",v.Screen.Form!lblPart.Text,"sLoc",v.DataTable.Group5(v.Local.iCnt).Loc!FieldValString,"iGroup",5)
+	f.Intrinsic.Control.Next(v.Local.iCnt)		
+	
+	f.Data.DataTable.AddColumn("MainTB","LotBin","String","Lot/Bin")
+	f.Data.DataTable.AddColumn("MainTB","Num","Long")
+	f.Data.DataTable.SetSeries("MainTB","Num",1,1)
+	
+	'LocDescr
+	f.Data.DataTable.FillFromDictionary("MainTB","LocDict","Location","LocDescr")	
+	
+	gui.Form.gsReserv.AddGridviewFromDatatable("GVMain","MainTB")
+	f.Intrinsic.Control.CallSub("Format_Grid")
+	gui.Form.gsReserv.MainView("GVMain")
+	
+	'Close Dictionary
+	f.Data.Dictionary.Close("OnHandDict")
+	f.Data.Dictionary.Close("AllCurReservedDict")
+	f.Data.Dictionary.Close("CurReservedDict")
+	f.Data.Dictionary.Close("CustomerDict")
+	f.Data.Dictionary.Close("LocDict")
+	
+	f.Intrinsic.UI.CloseWaitDialog
+	
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Refresh.End
+
+Program.Sub.Add_One_Location_Data.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.fOnhand.Declare
+	v.Local.fAllCurrentReserved.Declare
+	v.Local.fAvailable.Declare
+	v.Local.sLabelTotal.Declare
+	v.Local.sPartLoc.Declare
+	v.Local.fTotalOpenQty.Declare
+	
+	f.Intrinsic.Control.SelectCase(v.Args.iGroup)		
+		f.Intrinsic.Control.CaseAny(0,1,2,5)
+			'Get SOLine info
+			f.Intrinsic.Control.If(v.DataTable.EachLoc.Exists)
+				f.Data.DataTable.Close("EachLoc")
+			f.Intrinsic.Control.EndIf
+			
+			f.Intrinsic.String.Build("Select Location,Part,Order_No + '-' + Record_No as SOLine,DATE_ITEM_PROM,Customer,'' as Name,SHIP_ID as Order_Ship_ID,QTY_ORDERED,QTY_SHIPPED,QTY_BO,Part + '-' + Location as PartLoc from V_Order_Lines where Part = '{0}' and Location = '{1}' and Line_Type = 'S' Order by DATE_ITEM_PROM",v.Args.sPart,v.Args.sLoc,v.Local.sSQL)
+			f.Data.DataTable.CreateFromSQL("EachLoc","conx",v.Local.sSQL,True)
+			f.Data.DataTable.AddColumn("EachLoc","Current_Reserved","Float",0)
+			
+			'Fill Customer Name
+			f.Data.DataTable.FillFromDictionary("EachLoc","CustomerDict","Customer","Name")		
+			'Fill Current_Reserved
+			f.Data.DataTable.FillFromDictionary("EachLoc","CurReservedDict","SOLine","Current_Reserved")
+			f.Intrinsic.Control.CallSub("Add_To_MainTable")
+			f.Data.DataTable.Compute("EachLoc","Sum(Qty_BO)","",v.Local.fTotalOpenQty)
+	f.Intrinsic.Control.EndSelect	
+	
+	'BN, Aug 19 2019 Available = Qty_Onhand - Qty_required
+	f.Intrinsic.String.Build("{0}-{1}",v.Args.sPart,v.Args.sLoc,v.Local.sPartLoc)
+	v.Local.fOnhand.Set(v.Dictionary.OnhandDict![v.Local.sPartLoc])
+	v.Local.fAllCurrentReserved.Set(v.Dictionary.AllCurReservedDict![v.Local.sPartLoc])
+	'Obsolete
+	'f.Intrinsic.Math.Sub(v.Local.fOnhand,v.Local.fAllCurrentReserved,v.Local.fAvailable)
+	v.Local.fAvailable.Set(v.dictionary.QtyAvailableDict![v.Local.sPartLoc])
+	
+	'Add Total
+	f.Intrinsic.String.Build("Total Loc {0}",v.Args.sLoc,v.Local.sLabelTotal)
+	f.Data.DataTable.AddRow("MainTB","Location",v.Args.sLoc,"Part",v.Screen.Form!lblPart.Text,"Total",v.Local.sLabelTotal,"Qty_OnHand",v.Local.fOnhand,"Available",v.Local.fAvailable,"TotalOpenQty",v.Local.fTotalOpenQty,"TotalCurrentReserved",v.Local.fAllCurrentReserved)
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Add_One_Location_Data.End
+
+Program.Sub.Add_To_MainTable.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.iCnt.Declare
+	v.Local.sDate.Declare
+	v.Local.fCurrentReserved.Declare
+	v.Local.sSOLine.Declare
+	
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.DataTable.EachLoc.RowCount--,1)
+		f.Intrinsic.String.Format(v.DataTable.EachLoc(v.Local.iCnt).Date_Item_Prom!FieldValString,"MM-DD-YYYY",v.Local.sDate)
+		'Process null
+		v.Local.fCurrentReserved.Set(v.DataTable.EachLoc(v.Local.iCnt).Current_Reserved!FieldValString)
+		v.Local.sSOLine.Set(v.DataTable.EachLoc(v.Local.iCnt).SOLine!FieldValString)
+		'Add Row		
+		f.Data.DataTable.AddRow("MainTB","Location",v.DataTable.EachLoc(v.Local.iCnt).Location!FieldValString,"Part",v.DataTable.EachLoc(v.Local.iCnt).Part!FieldValString,"SOLine",v.Local.sSOLine.left11,"Customer",v.DataTable.EachLoc(v.Local.iCnt).Customer!FieldValString,"Name",v.DataTable.EachLoc(v.Local.iCnt).Name!FieldValString,"Order_Ship_ID",v.DataTable.EachLoc(v.Local.iCnt).Order_Ship_ID!FieldValString,"Qty_Ordered",v.DataTable.EachLoc(v.Local.iCnt).Qty_Ordered!FieldValString,"Qty_Shipped",v.DataTable.EachLoc(v.Local.iCnt).Qty_Shipped!FieldValString,"Qty_BO",v.DataTable.EachLoc(v.Local.iCnt).Qty_BO!FieldValString,"Current_Reserved",v.Local.fCurrentReserved,"Date_Item_PromDATE",V.Local.sDate)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}{1}GAB Version: {5}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Add_To_MainTable.End
+
+Program.Sub.Format_Grid.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sLableTotal.Declare
+	
+	Gui.Form.gsReserv.SuspendLayout()
+	'General format for the grid
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","AllowSort",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","AllowFilter",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","OptionsFindAlwaysVisible",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","EnableAppearanceOddRow",False)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","OptionsViewShowAutoFilterRow",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","AllowColumnResizing",True)
+	Gui.Form.gsReserv.SetGridViewProperty("GVMain","OptionsViewColumnAutoWidth",False)
+	'Visible Index
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Group,Location,LocDescr,SOLine,Date_Item_PromDATE,Customer,Name,Order_Ship_ID,Total,Qty_OnHand,Available,Qty_BO,TotalOpenQty,Current_Reserved,TotalCurrentReserved,LotBin","sProperty","VisibleIndex")
+	'Invisible
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Part,Qty_Ordered,Qty_Shipped","sProperty","Invisible")
+	''Width	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Location","sProperty","Width","sWidth","35")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","LocDescr","sProperty","MinWidth","sWidth","140")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","SOLine","sProperty","Width","sWidth","75")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Date_Item_PromDATE","sProperty","Width","sWidth","70")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Customer","sProperty","Width","sWidth","50")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Order_Ship_ID","sProperty","Width","sWidth","50")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Name","sProperty","Width","sWidth","150")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","TotalOpenQty,TotalCurrentReserved","sProperty","Width","sWidth","100")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Current_Reserved","sProperty","Width","sWidth","100")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_OnHand,Available,Qty_BO,Qty_Ordered,Qty_Shipped","sProperty","Width","sWidth","80")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Group","sProperty","Width","sWidth","60")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Total","sProperty","Width","sWidth","70")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Part","sProperty","MinWidth","sWidth","80")
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","LotBin","sProperty","Width","sWidth","60")
+	'Caption
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Location@!@Loc,LocDescr@!@Loc Description,SOLine@!@Order-Line,Date_Item_PromDATE@!@Due Date,Customer@!@Cust.,Order_Ship_ID@!@ShipID,Total@!@Total Loc,Qty_Onhand@!@Onhand,TotalOpenQty@!@Total Open Qty,TotalCurrentReserved@!@Total Cur.Resv,Qty_BO@!@Open Qty,Current_Reserved@!@Current Resv.,LotBin@!@Lot/Bin","sProperty","Caption")		
+	'Header Font bold
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Group,Part,Location,LocDescr,SOLine,Date_Item_PromDATE,Customer,Name,Order_Ship_ID,Qty_BO,TotalCurrentReserved,TotalOpenQty,Current_Reserved,Available,Total,Qty_OnHand,LotBin,Qty_Ordered,Qty_Shipped","sProperty","HeaderFontBold")
+	gui.Form.gsReserv.SetColumnProperty("GVMain","LotBin","HeaderHAlignment","center")
+	'For_CellValue_Changed
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Current_Reserved","sProperty","For_CellValue_Changed")	
+	'For_Row_CellClick
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","SOLine,LotBin","sProperty","For_RowCell_Click")
+	'HeaderHAlignment_Far	
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Qty_BO,Current_Reserved,Available,Qty_Onhand","sProperty","HeaderAllign_Far")
+	'Format Display Numeric
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_BO,Current_Reserved,Available,Qty_Onhand,TotalOpenQty,TotalCurrentReserved","sProperty","Decimal_1")	
+	'Fixed columns left
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Num,Group,Part,Location,LocDescr,SOLine,Date_Item_PromDATE,Customer","sProperty","FixedColumn_Left")
+
+	'Set backcolor to pink for underlined Location cell 
+	gui.Form.gsReserv.AddStyleFormatCondition("GVMain","Location","tagLocation","equal",v.Screen.Form!lblLoc.Text)
+	gui.Form.gsReserv.SetStyleFormatConditionProperty("GVMain","Location","tagLocation","backcolor","PeachPuff")
+	'Set forcolor to red for SOLine cell 
+	gui.Form.gsReserv.AddStyleFormatCondition("GVMain","SOLine","tagSOLine","equal",v.Screen.Form!lblSOLineDisplay.Text)
+	gui.Form.gsReserv.SetStyleFormatConditionProperty("GVMain","SOLine","tagSOLine","forecolor","Red")		
+	'Display date
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Date_Item_PromDATE","DisplayCustomDatetime","d")
+	'Set Backcolor column
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","TotalOpenQty","CellBackColor","LightGreen")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_BO","CellBackColor","LightGreen")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","TotalCurrentReserved","CellBackColor","LightBlue")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Current_Reserved","CellBackColor","LightBlue")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Qty_Onhand","CellBackColor","LightYellow")
+	Gui.Form.gsReserv.SetColumnProperty("GVMain","Available","CellBackColor","LightSalmon")	
+	
+	'Editor button
+	gui.Form.gsReserv.ColumnEdit("GVMain","LotBin","editorbutton","Lot/Bin")
+	
+	'Summary item
+	f.Intrinsic.Control.CallSub(FormatBulk,"GS","gsReserv","GV","GVMain","sInputColumns","Qty_Onhand,Qty_BO,Available,TotalOpenQty,TotalCurrentReserved,Current_Reserved","sProperty","SummaryItem")
+	
+	gui.Form.gsReserv.ResumeLayout()
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)	
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Format_Grid.End
+
+Program.Sub.FormatBulk.Start
+f.Intrinsic.Control.Try
+	V.Local..BulkDeclareString(sError,sColumns,sHold)
+	v.Local..BulkDeclareLong(iCnt)
+	
+	f.Intrinsic.String.Split(v.Args.sInputColumns,",",v.Local.sColumns)
+	f.Intrinsic.Control.For(v.Local.iCnt,0,v.Local.sColumns.UBound,1)
+		F.Intrinsic.Control.SelectCase(v.Args.sProperty)
+			F.Intrinsic.Control.Case("MinWidth")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"MinWidth",v.Args.sWidth)
+			F.Intrinsic.Control.Case("MaxWidth")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"MaxWidth",v.Args.sWidth)
+			F.Intrinsic.Control.Case("Width")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"Width",v.Args.sWidth)
+			F.Intrinsic.Control.Case("Invisible")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"Visible",False)
+			F.Intrinsic.Control.Case("VisibleIndex")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"VisibleIndex",v.Local.iCnt)
+			F.Intrinsic.Control.Case("Caption")
+				f.Intrinsic.String.Split(v.Local.sColumns(v.Local.iCnt),"@!@",v.Local.sHold)
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sHold(0),"Caption",v.Local.sHold(1))
+			F.Intrinsic.Control.Case("HeaderAllign_Far")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"HeaderHAlignment","Far")
+			F.Intrinsic.Control.Case("HeaderFontBold")	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"HeaderFontBold",True)
+			F.Intrinsic.Control.Case("Decimal_1")	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"DisplayCustomNumeric","###,###,###,##0.00")
+			f.Intrinsic.Control.Case("CellBackColor")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"CellBackColor",v.Args.sColor)
+			f.Intrinsic.Control.Case("For_CellValue_Changed")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"AllowEdit",True)	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"ReadOnly",False)
+			f.Intrinsic.Control.Case("For_RowCell_Click")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"AllowEdit",False)	
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"ReadOnly",True)
+			f.Intrinsic.Control.Case("FixedColumn_Left")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"Fixed","Left")
+			f.Intrinsic.Control.Case("Link")
+				gui.Form.[v.Args.GS].SetColumnProperty(v.Args.GV,v.Local.sColumns(v.Local.iCnt),"CellForeColor","Blue")
+			f.Intrinsic.Control.Case("SummaryItem")
+				f.Intrinsic.String.Build("Sum_{0}",v.Local.sColumns(v.Local.iCnt),v.Local.sHold)
+				gui.Form.[v.Args.GS].AddSummaryItem(v.Args.GV,v.Local.sColumns(v.Local.iCnt),v.Local.sHold,"Sum","","","n")
+			F.Intrinsic.Control.EndSelect		
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.FormatBulk.End
+
+Program.Sub.gsReserv_CellValueChanged.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSOLine.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fCurrentReserved.Declare
+	v.Local.fNewReserved.Declare
+	v.Local.sRow.Declare	
+	v.Local.sLocProcess.Declare
+	v.Local.sHold.Declare
+	v.Local.sTotalLabel.Declare
+	v.Local.sPartProcess.Declare
+	
+	f.Intrinsic.Control.If(v.Args.Column,=,"Current_Reserved")
+		v.Local.sSOLine.Set(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValString)
+		v.Local.sTotalLabel.Set(v.DataTable.MainTB(v.Args.RowIndex).Total!FieldValString)		
+		f.Intrinsic.Control.If(v.Local.sTotalLabel.left5,=,"Total")	
+			f.Data.DataTable.SetValue("MainTB",v.Args.RowIndex,"Current_Reserved",0)
+			f.Intrinsic.UI.Msgbox("You can not change value in this cell")
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+	
+		gui.Form.gsReserv.GetCellValueByColumnName("GVMain","Current_Reserved",v.Args.RowIndex,v.Local.fNewReserved)			
+		'Get Current_Reserved
+		f.Intrinsic.String.Split(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValString,"-",v.Local.sSOLine)	
+		'Format Line to be 4 chars
+		f.Intrinsic.String.Build("{0}0",v.Local.sSOLine(1),v.Local.sSOLine(1))
+		f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",v.Local.sSOLine(0),v.Local.sSOLine(1),v.Local.sSQL)
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		v.Local.fCurrentReserved.Set(v.Local.sRet)
+		'Validate New Reserve must not be negative
+		f.Intrinsic.Control.If(v.Local.fNewReserved,<,0)
+			f.Intrinsic.UI.Msgbox("Please enter a positive number","Invalid number")
+			f.Data.DataTable.SetValue("MainTB",v.Args.RowIndex,"Current_Reserved",v.Local.fCurrentReserved)
+			'this will not save
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+		
+		'Get Available Qty
+		f.Intrinsic.Control.CallSub("Get_Available_Qty","sPart",v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,"sLoc",v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString)		
+		
+		f.Intrinsic.Control.If(v.Local.fNewReserved,>,v.DataTable.MainTB(v.Args.RowIndex).Qty_BO!FieldValFloat)
+			f.Intrinsic.UI.Msgbox("Reserved must not be greater than Open Quantity","Invalid Reserved Quantity")
+			f.Data.DataTable.SetValue("MainTB",v.Args.RowIndex,"Current_Reserved",v.Local.fCurrentReserved)
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf		
+		
+		'At this point it is good to save
+		'Save to GCG_5210_Reserve. If there is no record (key SO, Line), Insert new line. If there is, Update line
+		f.Intrinsic.String.Build("Select SO,Line from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",v.Local.sSOLine(0),v.Local.sSOLine(1),v.Local.sSql)		
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		f.Intrinsic.Control.If(v.Local.sRet,=,"")
+			f.Intrinsic.String.Build("Insert into GCG_5210_Reserve (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Caller.User,v.Local.sSql)
+		f.Intrinsic.Control.Else		
+			f.Intrinsic.String.Build("Update GCG_5210_Reserve set Part = '{2}', Loc = '{3}',Current_Reserved = {4},Qty_Reserved = {5},View_User = '{6}',Date_Reserved = Now() where SO = '{0}' and Line = '{1}'",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Caller.User,v.Local.sSql)
+		f.Intrinsic.Control.EndIf		
+
+		f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+		
+		'BN, Feb 2019, insert to History***********************************************		
+		f.Intrinsic.Control.If(v.DataTable.MainTB(v.Args.RowIndex).Order_Ship_ID!FieldValString,=,"#ToRelease")
+			f.Intrinsic.String.Build("Released by {0}",v.Caller.User,v.Local.sHold)		
+			f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Local.sHold,v.Local.sSql)
+		f.Intrinsic.Control.Else
+			f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Current_Reserved,Qty_Reserved,View_User,Date_Reserved) values ('{0}','{1}','{2}','{3}',{4},{5},'{6}',NOW())",v.Local.sSOLine(0),v.Local.sSOLine(1),v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString,v.Local.fNewReserved,v.Local.fNewReserved,v.Caller.User,v.Local.sSql)
+		f.Intrinsic.Control.EndIf	
+		f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+		'******************************************************************************
+		
+		'Set Available and all Current Reserved of the underlined part,loc
+		v.Local.sLocProcess.Set(v.DataTable.MainTB(v.Args.RowIndex).Location!FieldValString)
+		v.Local.sPartProcess.Set(v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString)
+		'Get total Row number
+		f.Intrinsic.String.Build("Total = 'Total Loc {0}' and Part = '{1}'",v.Local.sLocProcess,v.Local.sPartProcess,v.Local.sHold)
+		f.Data.DataTable.Select("MainTB",v.Local.sHold,v.Local.sRow)
+		
+		f.Intrinsic.Control.CallSub("Get_Available_Qty","sPart",v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,"sLoc",v.Local.sLocProcess)
+		f.Data.DataTable.SetValue("MainTB",v.Local.sRow,"Available",v.Args.fAvailableQty)
+		f.Intrinsic.Control.CallSub("Get_All_Current_Reserved","sPart",v.DataTable.MainTB(v.Args.RowIndex).Part!FieldValString,"sLoc",v.Local.sLocProcess)
+		f.Data.DataTable.SetValue("MainTB",v.Local.sRow,"TotalCurrentReserved",v.Args.fAllcurrentReservedQty)
+	f.Intrinsic.Control.EndIf	
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+
+Program.Sub.gsReserv_CellValueChanged.End
+
+Program.Sub.gsReserv_RowCellClick.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSO.Declare
+	v.Local.sParam.Declare
+	v.Local.sMsg.Declare
+	v.Local.sCurrentSO.Declare
+	
+	f.Intrinsic.Control.If(v.Args.Column,=,"LotBin")
+		f.Intrinsic.UI.Msgbox("Will display lot/bin")
+	f.Intrinsic.Control.ElseIf(v.Args.Column,=,"SOLine")
+		f.Intrinsic.Control.If(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValString,=,v.Screen.Form!lblSOLine.Text)
+			f.Intrinsic.Control.ExitSub
+		f.Intrinsic.Control.EndIf
+		
+		f.Intrinsic.String.Split(v.DataTable.MainTB(v.Args.RowIndex).SOLine!FieldValTrim,"-",v.Local.sSO)
+		f.Intrinsic.String.Split(v.Screen.Form!lblSOLine.Text,"-",v.Local.sCurrentSO)			
+		f.Intrinsic.Control.If(v.Local.sSO(0),<>,v.Local.sCurrentSO(0).Trim,and,v.Local.sSO(0).Trim,<>,"")
+			F.Intrinsic.String.Concat(v.Local.sSO(0),"!*!","O","!*!","*!*ZDR*!*",v.Local.sParam)
+			f.Intrinsic.String.Build("Open Sales Order {0}",v.Local.sSO(0),v.Local.sMsg)
+			f.Intrinsic.UI.InvokeWaitDialog(v.Local.sMsg)
+			F.Global.General.CallWrapperASync(200000,V.Local.sParam)
+			f.Intrinsic.UI.CloseWaitDialog
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.gsReserv_RowCellClick.End
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''End Reserve Grid''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Program.Sub.UnLoad.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+
+	F.Intrinsic.Control.If(V.ODBC.conx.State,=,1)
+		F.ODBC.Connection!conx.close
+	F.Intrinsic.Control.EndIf
+	
+	f.Intrinsic.Control.End
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.UnLoad.End
+
+Program.Sub.Form_UnLoad.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	
+	f.Intrinsic.Control.CallSub("Format_SO_Line_Part_Loc")
+	f.Intrinsic.Control.CallSub("Get_Current_Reserved","sPart",v.args.sPart,"sLoc",v.args.sLoc,"sSO",v.Args.sSO,"sLine",v.Args.sLine)
+	v.Passed.GAB-TEXT-2.Set(v.Args.fCurrentReservedQty)
+	
+	f.Intrinsic.Control.CallSub("Unload")
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Form_UnLoad.End
+
+Program.Sub.cmdRefresh_Click.Start
+gui.Form.timerAutoRefresh.Enabled(False)
+f.Intrinsic.Control.CallSub("Refresh")		
+f.Intrinsic.Control.CallSub("Set_Timer")
+Program.Sub.cmdRefresh_Click.End
+
+Program.Sub.cmdStop_Click.Start
+gui.Form.timerAutoRefresh.Enabled(False)
+Program.Sub.cmdStop_Click.End
+
+Program.Sub.Validate_Shipment.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	V.Local.iRow.Declare
+	V.Local.iC.Declare
+	V.Local.sReadRow.Declare
+	V.Local.sSQL.Declare
+	v.Local.sSO.Declare
+	V.Local.sLine.Declare
+	v.Local.fQty.Declare
+	v.Local.sRet.Declare
+	v.Local.fCurrentReserved.Declare
+	v.Local.sMsg.Declare
+	v.Local.sView_User.Declare
+	v.Local.sPart.Declare
+	v.Local.sLoc.Declare
+	
+	
+	F.Intrinsic.BDF.Load("AUX001","AUX001")
+	F.Intrinsic.BDF.Clone("AUX001","Clone")
+	F.Intrinsic.BDF.ReadRowCount("AUX001",V.Local.iRow)
+	F.Intrinsic.Math.Sub(V.Local.iRow,1,V.Local.iRow)
+
+	f.Intrinsic.UI.InvokeWaitDialog("Validating Ship Quantity...")
+	
+	F.Intrinsic.Control.For(V.Local.iC,0,V.Local.iRow,1)
+		'Read row and check for additional qty
+		F.Intrinsic.BDF.ReadRow("AUX001",V.Local.iC,V.Local.sReadRow)
+		F.Intrinsic.String.Split(V.Local.sReadRow,"|~|",V.Local.sReadRow)
+		f.Intrinsic.String.LPad(v.Local.sReadRow(0),"0",7,v.Local.sSO)
+		f.Intrinsic.String.LPad(v.Local.sReadRow(1),"0",3,v.Local.sLine)
+		v.Local.sPart.Set(v.Local.sReadRow(8))
+		v.Local.sLoc.Set(v.Local.sReadRow(10))
+		f.Intrinsic.String.Build("{0}0",v.Local.sLine,v.Local.sLine)
+		v.Local.fQty.Set(v.Local.sReadRow(3))
+		
+		f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}' and Part = '{2}' and Loc = '{3}'",v.Local.sSO,v.Local.sLine,v.Local.sPart,v.Local.sLoc,v.Local.sSQL)
+		f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+		v.Local.fCurrentReserved.Set(v.Local.sRet)
+		
+		f.Intrinsic.Control.If(v.Local.fQty,>,v.Local.fCurrentReserved)
+			f.Intrinsic.String.Build("Can not ship. Order: {0}-{1} current reserved is {2}.",v.Local.sSO,v.Local.sLine.left3,v.Local.fCurrentReserved,v.Local.sMsg)
+			f.Intrinsic.UI.Msgbox(v.Local.sMSG)		
+			'Halt shipping
+			V.Passed.777777.Set(1)
+			f.Intrinsic.ui.CloseWaitDialog
+			f.Intrinsic.Control.ExitSub		
+		f.Intrinsic.Control.EndIf
+		
+	F.Intrinsic.Control.Next(V.Local.iC)
+
+	f.Intrinsic.ui.CloseWaitDialog	
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.Validate_Shipment.End
+
+Program.Sub.Deduct_Shipment.Start
+f.Intrinsic.Control.Try
+	V.Local.sError.Declare
+	V.Local.iRow.Declare
+	V.Local.iC.Declare
+	V.Local.sReadRow.Declare
+	V.Local.sSQL.Declare
+	v.Local.sSO.Declare
+	V.Local.sLine.Declare
+	v.Local.fQty.Declare
+	v.Local.sRet.Declare
+	v.Local.fCurrentReserved.Declare
+	v.Local.sMsg.Declare
+	v.Local.sView_User.Declare
+	v.Local.sPart.Declare
+	v.Local.sLoc.Declare
+
+	F.Intrinsic.BDF.Load("AUX001","AUX001")
+	F.Intrinsic.BDF.Clone("AUX001","Clone")
+	F.Intrinsic.BDF.ReadRowCount("AUX001",V.Local.iRow)
+	F.Intrinsic.Math.Sub(V.Local.iRow,1,V.Local.iRow)
+
+	f.Intrinsic.UI.InvokeWaitDialog("Deducting Ship quantity from Current Reserved quantity...")
+	'Update Current reserved
+	F.Intrinsic.Control.For(V.Local.iC,0,V.Local.iRow,1)
+	
+		'Read row and check for additional qty
+		F.Intrinsic.BDF.ReadRow("AUX001",V.Local.iC,V.Local.sReadRow)
+		F.Intrinsic.String.Split(V.Local.sReadRow,"|~|",V.Local.sReadRow)
+		f.Intrinsic.String.LPad(v.Local.sReadRow(0),"0",7,v.Local.sSO)
+		f.Intrinsic.String.LPad(v.Local.sReadRow(1),"0",3,v.Local.sLine)
+		v.Local.sPart.Set(v.Local.sReadRow(8))
+		v.Local.sLoc.Set(v.Local.sReadRow(10))
+		f.Intrinsic.String.Build("{0}0",v.Local.sLine,v.Local.sLine)
+		v.Local.fQty.Set(v.Local.sReadRow(3))	
+		
+		f.Intrinsic.Control.If(v.Local.fQty,>,0)	
+			f.Intrinsic.String.Build("Shipped by {0}",v.Caller.User,v.Local.sView_User)
+		
+			'Calculate the New current reserved
+			f.Intrinsic.String.Build("Select Current_Reserved from GCG_5210_Reserve where SO = '{0}' and Line = '{1}' and Part = '{2}' and Loc =  '{3}'",v.Local.sSO,v.Local.sLine,v.Local.sPart,v.Local.sLoc,v.Local.sSQL)
+			f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQl,v.Local.sRet)
+			
+			v.Local.fCurrentReserved.Set(v.Local.sRet)
+			f.Intrinsic.Math.Sub(v.Local.fCurrentReserved,v.Local.fQty,v.Local.fCurrentReserved)			
+			f.Intrinsic.Math.Sub(0,v.Local.fQty,v.Local.fQty)
+			
+			'Update current reserved
+			'BN Aug 16: fixed: when Current_Reserved =< 0
+			f.Intrinsic.String.Build("Update GCG_5210_Reserve set Current_Reserved = CASE WHEN Current_Reserved <= 0 Then 0 WHEN Current_Reserved > 0 Then '{4}' END,Qty_Reserved = {5},View_User = '{6}', Date_Reserved = Now() where SO = '{0}' and Line = '{1}'  and Part = '{2}' and Loc = '{3}'" ,v.Local.sSO,v.Local.sLine,v.Local.sPart,v.Local.sLoc,v.Local.fCurrentReserved,v.Local.fQty,v.Local.sView_User,v.Local.sSQL)
+			f.ODBC.Connection!conx.Execute(v.Local.sSQl)			
+			
+			'BN, Feb 2019, insert to History ***************************
+			f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,Part,Loc,Qty_Reserved,View_User,Date_Reserved,Current_Reserved) values ('{0}','{1}','{2}','{3}',{4},'{5}',NOW(),{6})",v.Local.sSO,v.Local.sLine,v.Local.sPart,v.Local.sLoc,v.Local.fQty,v.Local.sView_User,v.Local.fCurrentReserved,v.Local.sSql)
+			f.ODBC.Connection!conx.Execute(v.Local.sSQl)
+		
+		f.Intrinsic.Control.EndIf
+		'************************************************************************************************************************************
+		
+	F.Intrinsic.Control.Next(V.Local.iC)
+	
+	f.Intrinsic.UI.CloseWaitDialog	
+
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.Deduct_Shipment.End
+
+Program.Sub.Suggest_Reserved.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sRet.Declare
+	v.Local.fQty.Declare
+	v.Local.fAvailable.Declare	
+
+	'Check to see if this is a new line or a line with new part, if so, suggest: if qty <= available, reserved = qty, else, reserved = available
+	f.Intrinsic.String.Build("Select Order_NO,Record_NO,Part,Location from V_Order_Lines where Order_NO = '{0}' and Record_NO = '{1}' and Part = '{2}' and Location = '{3}' and Line_Type = 'S'",v.Args.sSO,v.Args.sLine,v.Args.sPart,v.Args.sLoc,V.Local.SSQL)
+	f.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSQL,v.Local.sRet)
+	f.Intrinsic.Control.If(v.Local.sRet,=,"")
+		'This is a new line/or new Part			
+		v.Local.fQty.Set(Variable.Passed.000001)
+		v.Local.fAvailable.Set(v.Passed.GAB-TEXT-1)
+		f.Intrinsic.Control.If(v.Local.fAvailable,>,0)		
+			f.Intrinsic.Control.If(v.Local.fQty,<=,v.Local.fAvailable)
+				v.Passed.GAB-TEXT-2.Set(v.Local.fQty)
+			f.Intrinsic.Control.Else		
+				v.Passed.GAB-TEXT-2.Set(v.Local.fAvailable)
+			f.Intrinsic.Control.EndIf		
+		f.Intrinsic.Control.Else
+			v.Passed.GAB-TEXT-2.Set("0")
+		f.Intrinsic.Control.EndIf
+				
+	f.Intrinsic.Control.EndIf
+	
+F.Intrinsic.Control.Catch
+	Function.Intrinsic.String.Build("Subroutine Error {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End	
+F.Intrinsic.Control.EndTry
+Program.Sub.Suggest_Reserved.End
+
+Program.Sub.Delete_Reserve.Start
+f.Intrinsic.Control.Try
+	v.Local.sError.Declare
+	v.Local.sSQL.Declare
+	v.Local.sView_User.Declare
+	
+	f.Intrinsic.String.Build("Delete from GCG_5210_Reserve where SO = '{0}' and Line = '{1}'",v.Args.sSO,v.Args.sLine,v.Local.sSQL)
+	f.ODBC.Connection!conx.Execute(v.Local.sSQL)
+	
+	'BN, Feb 2019, insert to History ***************************	
+	f.Intrinsic.String.Build("Deleted by {0}",v.Caller.User,v.Local.sView_User)
+	f.Intrinsic.String.Build("Insert into GCG_5210_Hist (SO,Line,View_User,Date_Reserved) values ('{0}','{1}','{2}',NOW())",v.Args.sSO,v.Args.sLine,v.Local.sView_User,v.Local.sSql)
+	f.ODBC.Connection!conx.Execute(v.Local.sSQl)
+	'*****************************************
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.String.Build("Project: {0}{1}Subroutine: {2}{1}Error Occurred {3} with description {4}{1}GAB Version: {5}}",V.Ambient.ScriptPath,V.Ambient.Newline,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Ambient.GABVersion,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	f.Intrinsic.Control.CallSub("Unload")
+F.Intrinsic.Control.EndTry
+Program.Sub.Delete_Reserve.End
