@@ -1,0 +1,11 @@
+CREATE TABLE "GCG_5210_Reserve"(
+ "SO" CHAR(7) NOT NULL ,
+ "Line" CHAR(4) NOT NULL ,
+ "Part" CHAR(20) NOT NULL ,
+ "Loc" CHAR(2) NOT NULL ,
+ "Current_Reserved" NUMERIC(15,6) NOT NULL ,
+ "Qty_Reserved" NUMERIC(15,6) NOT NULL ,
+ "View_User" CHAR(8),
+ "Date_Reserved" DATETIME);
+
+CREATE UNIQUE NOT MODIFIABLE INDEX "GCG_5210K00" USING 0 ON "GCG_5210_Reserve"("SO", "Line");
